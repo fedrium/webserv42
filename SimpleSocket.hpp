@@ -1,5 +1,5 @@
-#ifndef WEBSERV.HPP
-#define WEBSERV.HPP
+#ifndef SIMPLESOCKET_HPP
+#define SIMPLESOCKET_HPP
 
 #include <stdio.h>
 #include <unistd.h>
@@ -8,18 +8,23 @@
 
 namespace HDE
 {
-    class simple_socket
+    class SimpleSocket
     {
         private:
             struct sockaddr_in address;
             int sock;
             int connection;
+
         public:
-            simple_socket(int domain, int service, int protocol, int port, u_long interface);
+            SimpleSocket(int domain, int service, int protocol, int port, u_long interface);
             virtual int connect_to_network(int sock, struct sockaddr_in address) = 0;
             void test_connection(int);
+
             int get_sock();
             int get_connection();
+			struct sockaddr_in get_address();
+
+			void set_connection(int con);
     };
 }
 
