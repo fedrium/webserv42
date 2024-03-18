@@ -4,7 +4,7 @@ HDE::ConnectingSocket::ConnectingSocket(int domain, int service, int protocol, i
 	SimpleSocket(domain, service, protocol, port, interface)
 {
 	connect_to_network(get_sock(), get_address());
-	test_connection(get_connection());
+	// test_connection(get_connection());
 }
 
 void HDE::ConnectingSocket::connect_to_network(int sock, struct sockaddr_in address)

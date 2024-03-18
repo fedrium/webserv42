@@ -8,13 +8,6 @@ HDE::SimpleSocket::SimpleSocket(int domain, int service, int protocol, int port,
     sock = socket(domain, service, protocol);
 
 	const int enable = 1;
-	if (setsockopt(this->sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
-		std::cerr << "setsockopt(SO_REUSEADDR) failed" << std::endl;
-
-	// set socket to non-blocking
-	if (fcntl(this->sock, F_SETFL, O_NONBLOCK, FD_CLOEXEC) < 0)
-		std::cerr << "failed to set socket to non-blocking" << std::endl;
-
 	test_connection(this->sock);
 }
 

@@ -11,3 +11,8 @@ void HDE::BindingSocket::connect_to_network(int sock, struct sockaddr_in address
 {
 	binding = bind(sock, (struct sockaddr *)&address, sizeof(address));
 }
+
+int HDE::BindingSocket::get_binding()
+{
+	return (binding);
+}
