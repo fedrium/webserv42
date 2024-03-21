@@ -12,7 +12,6 @@ namespace HDE
 			int listening;
 		
 		public:
-			void connect_to_network(int sock, struct sockaddr_in address);
 			ListeningSocket(int domain, int service, int protocol, int port, u_long interface, int bklg);
 
 			void start_listening();

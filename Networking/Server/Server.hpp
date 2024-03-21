@@ -8,7 +8,7 @@ namespace HDE
 	class Server : public SimpleServer
 	{
 		private:
-			char buffer[30000];
+			char buffer[30000] = {0};
 			int new_socket;
 
 			void accepter();

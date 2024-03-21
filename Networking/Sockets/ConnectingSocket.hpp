@@ -8,12 +8,13 @@ namespace HDE
 	class ConnectingSocket : public SimpleSocket
  	{
 		private:
-			int binding;
+			int	connecting;
+			void connect_to_network(int sock, struct sockaddr_in address);
 
 		public:
-			void connect_to_network(int sock, struct sockaddr_in address);
 			ConnectingSocket(int domain, int service, int protocol, int port, u_long interface);// : SimpleSocket(domain, service, protocol, port, interface){}
 
+			int get_connecting();
 	};
 	
 }

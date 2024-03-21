@@ -17,6 +17,7 @@ int HDE::ListeningSocket::get_backlog()
 {
 	return (backlog);
 }
+
 int HDE::ListeningSocket::get_listening()
 {
 	return (listening);

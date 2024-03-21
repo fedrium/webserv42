@@ -5,24 +5,28 @@ HDE::SimpleSocket::SimpleSocket(int domain, int service, int protocol, int port,
     address.sin_family = domain;
     address.sin_port = htons(port);
     address.sin_addr.s_addr = htonl(interface);
-    sock = socket(domain, service, protocol);
 
-	const int enable = 1;
+    sock = socket(domain, service, protocol);
+	// std::cout << sock << std::endl;
 	test_connection(this->sock);
+	// std::cout << sock << std::endl;
 }
 
 void HDE::SimpleSocket::test_connection(int item_to_test)
 {
-    if (item_to_test)
+    if (item_to_test < 0)
     {
+		// std::cout << item_to_test << std::endl;
         perror("Error");
-        return;
+		// std::cout << "Errno: " << errno << std::endl;
+        exit(EXIT_FAILURE);
+		
     }
 }
 
 int HDE::SimpleSocket::get_sock()
 {
-    return (sock);
+    return (this->sock);
 }
 
 struct sockaddr_in HDE::SimpleSocket::get_address()
