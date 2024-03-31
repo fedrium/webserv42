@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 		servers.showInfo();
 	}
 	else
-		cout << "Please input: ./webserv [configuration file]" << endl;
+		cout << "Please input: ./a.out [configuration file]" << endl;
 }
 
 // g++ main.cpp ParseConfig.cpp ServerConfig.cpp ServerLocation.cpp 
