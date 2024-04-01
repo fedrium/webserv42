@@ -15,25 +15,35 @@ class ServerLocation
 		string					root;
 		string					autoindex;
 		string					index;
-		std::vector<string>		methods;
+		std::vector<string>		allowed_methods;
 		string					return_url;
-		std::vector<string>		cgi_path;
-		std::vector<string>		cgi_ext;
+		string					alias;
 		string					client_max_body_size;
 
 	public:
 		ServerLocation();
 		~ServerLocation();
 
-		void set_path(std::vector<string> info);
-		void set_root(std::vector<string> info);
-		void set_methods(std::vector<string> info);
-		void set_autoindex(std::vector<string> info);
-		void set_index(std::vector<string> info);
-		void set_return_url(std::vector<string> info);
-		void set_cgi_path(std::vector<string> info);
-		void set_cgi_extension(std::vector<string> info);
-		void set_client_max_body_size(std::vector<string> info);
+		void	parseInfoLocation(vector<string> info);
+		void	printInfoLocation();
+
+		void 	set_path(std::vector<string> info);
+		void 	set_root(std::vector<string> info);
+		void 	set_allowed_methods(std::vector<string> info);
+		void 	set_autoindex(std::vector<string> info);
+		void 	set_index(std::vector<string> info);
+		void 	set_return_url(std::vector<string> info);
+		void	set_alias(std::vector<string> info);
+		void 	set_client_max_body_size(std::vector<string> info);
+
+		string				get_path();
+		string				get_root();
+		vector<string>		get_allowed_methods();
+		string				get_autoindex();
+		string				get_index();
+		string				get_return_url();
+		string				get_alias();
+		string				get_client_max_body_size();
 };
 
 #endif

@@ -2,13 +2,10 @@
 
 ServerConfig::ServerConfig()
 {
-	this->ports.push_back("80");
 	this->root = "";
 	this->index = "";
 	this->server_name = "localhost";
-	this->client_max = "1m";
-	this->allowed_methods.push_back("GET");
-
+	this->client_max = "";
 }
 
 ServerConfig::~ServerConfig()
@@ -17,6 +14,22 @@ ServerConfig::~ServerConfig()
 }
 
 void ServerConfig::parseInfo(vector<string> info)
+{
+	static unsigned int in_location_block = 0;
+
+	if (info[0] == "location")
+		in_location_block += 1;
+
+	if (info[0] == "}" && in_location_block % 2 == 1)
+		in_location_block += 1;
+
+	if (in_location_block % 2 == 0)
+		set_server_attr(info);
+	else
+		set_locations(info);
+}
+
+void	ServerConfig::set_server_attr(vector<string> info)
 {
 	if (info[0] == "listen")
 		set_ports(info);
@@ -34,8 +47,6 @@ void ServerConfig::parseInfo(vector<string> info)
 		set_error_page(info);
 	else if (info[0] == "cgi_script")
 		set_cgi(info);
-	else
-		set_locations(info);	
 }
 
 void	ServerConfig::printInfo()
@@ -45,10 +56,10 @@ void	ServerConfig::printInfo()
     	cout << *i << ' ';
 	cout << endl;
 
-	cout << "Root: " << this->root << endl;
-	cout << "Index: " << this->index << endl;
-	cout << "Server name: " << this->server_name << endl;
-	cout << "Client max body size: " << this->client_max << endl;
+	cout << "Root: " << get_root() << endl;
+	cout << "Index: " << get_index() << endl;
+	cout << "Server name: " << get_server_name() << endl;
+	cout << "Client max body size: " << get_client_max() << endl;
 
 	cout << "Allowed methods: ";
 	for (std::vector<string>::const_iterator i = this->allowed_methods.begin(); i != this->allowed_methods.end(); ++i)
@@ -63,6 +74,10 @@ void	ServerConfig::printInfo()
 	for (std::map<string, string>::const_iterator i = this->cgi.begin(); i != this->cgi.end(); ++i)
     	cout << "    " << i->first << " " << i->second << endl;
 
+	cout << "Locations: " << endl;
+	for (int i = 0; i < this->locations.size(); i++)
+    	this->locations[i].printInfoLocation();
+	cout << endl;
 	
 	cout << endl << "=============================================================================" << endl << endl;
 
@@ -70,7 +85,6 @@ void	ServerConfig::printInfo()
 
 void	ServerConfig::set_ports(vector<string> info)
 {
-	this->ports.clear();
 	for (int i = 1; i < info.size(); i++)  
         this->ports.push_back(info[i]);
 }
@@ -97,7 +111,6 @@ void	ServerConfig::set_client_max(vector<string> info)
 
 void	ServerConfig::set_allowed_methods(vector<string> info)
 {
-	this->allowed_methods.clear();
 	for (int i = 1; i < info.size(); i++)
         this->allowed_methods.push_back(info[i]);
 }
@@ -114,6 +127,62 @@ void	ServerConfig::set_cgi(vector<string> info)
 
 void	ServerConfig::set_locations(vector<string> info)
 {
-	
+	static int i = -1;
+
+	if (!this->locations.size())
+		i = -1;
+
+	if (info[0] == "location")
+	{
+		this->locations.push_back(ServerLocation());
+		i++;
+		locations[i].set_path(info);
+	}
+	else if (this->locations.size())
+		locations[i].parseInfoLocation(info);
 }
 
+string	ServerConfig::get_root()
+{
+	return (this->root);
+}
+
+string	ServerConfig::get_index()
+{
+	return (this->index);
+}
+
+string	ServerConfig::get_server_name()
+{
+	return (this->server_name);
+}
+
+string	ServerConfig::get_client_max()
+{
+	return (this->client_max);
+}
+
+std::vector<string>	ServerConfig::get_ports()
+{
+	return (this->ports);
+}
+
+std::vector<string>	ServerConfig::get_allowed_methods()
+{
+	return (this->allowed_methods);
+}
+
+std::map<string, string>	ServerConfig::get_error_page()
+{
+	return (this->error_page);
+}
+
+std::map<string, string>	ServerConfig::get_cgi()
+{
+	return (this->cgi);
+}
+
+std::vector<ServerLocation>	ServerConfig::get_locations()
+{
+	return (this->locations);
+}
