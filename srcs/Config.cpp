@@ -1,16 +1,16 @@
-#include "ParseConfig.hpp"
+#include "Config.hpp"
 
-ParseConfig::ParseConfig()
+Config::Config()
 {
 
 }
 
-ParseConfig::~ParseConfig()
+Config::~Config()
 {
 
 }
 
-void	ParseConfig::parseServers(string file)
+void	Config::parseServers(string file)
 {
 	std::ifstream	filestream(file.c_str());
 	string			line;
@@ -32,7 +32,7 @@ void	ParseConfig::parseServers(string file)
 	}
 }
 
-vector<string>	ParseConfig::chopString(string str)
+vector<string>	Config::chopString(string str)
 {
 	vector<string> v;
     int		start = 0;
@@ -49,7 +49,7 @@ vector<string>	ParseConfig::chopString(string str)
 	return (v);
 }
 
-void	ParseConfig::showInfo()
+void	Config::showInfo()
 {
 	for (int i = 0; i < this->servers.size(); i++)
 		this->servers[i].printInfo();

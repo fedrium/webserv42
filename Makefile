@@ -5,7 +5,7 @@ SERVER_DIR	= Networking/Server
 SERVER_FILE	= Server.cpp SimpleServer.cpp
 
 SRCS_DIR = srcs/
-SRCS_FILE = ParseConfig.cpp ServerConfig.cpp ServerLocation.cpp main.cpp
+SRCS_FILE = Config.cpp ServerConfig.cpp ServerLocation.cpp main.cpp
 
 CC			= g++
 RM			= rm -rf

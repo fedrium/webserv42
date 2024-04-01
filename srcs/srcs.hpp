@@ -2,7 +2,7 @@
 #define SRCS_HPP
 
 #include "../webserv.hpp"
-#include "ParseConfig.hpp"
+#include "Config.hpp"
 #include "ServerConfig.hpp"
 
 #endif

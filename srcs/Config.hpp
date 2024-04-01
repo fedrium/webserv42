@@ -1,5 +1,5 @@
-#ifndef PARSECONFIG_HPP
-#define PARSECONFIG_HPP
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
 
 #include "srcs.hpp"
 #include "ServerConfig.hpp"
@@ -12,14 +12,14 @@ using std::vector;
 
 class ServerConfig;
 
-class ParseConfig
+class Config
 {
 	private:
 		std::vector<ServerConfig>	servers;
 
 	public:
-		ParseConfig();
-		~ParseConfig();
+		Config();
+		~Config();
 
 		void				showInfo();
 		void				parseServers(string file);

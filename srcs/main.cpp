@@ -5,7 +5,7 @@ int main(int argc, char **argv)
 	if (argc == 2)
 	{
 		string file = argv[1];
-		ParseConfig	servers;
+		Config	servers;
 		servers.parseServers(file);
 		servers.showInfo();
 	}
