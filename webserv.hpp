@@ -17,5 +17,6 @@
 #include <exception>
 
 #include "Networking/hdelibcnetworking.hpp"
+#include "srcs/srcs.hpp"
 
 #endif

@@ -1,6 +1,6 @@
 #include "ServerConfig.hpp"
 
-ServerConfig::ServerConfig()
+CONF::ServerConfig::ServerConfig()
 {
 	this->root = "";
 	this->index = "";
@@ -8,12 +8,12 @@ ServerConfig::ServerConfig()
 	this->client_max = "";
 }
 
-ServerConfig::~ServerConfig()
+CONF::ServerConfig::~ServerConfig()
 {
 
 }
 
-void ServerConfig::parseInfo(vector<string> info)
+void CONF::ServerConfig::parseInfo(vector<string> info)
 {
 	static unsigned int in_location_block = 0;
 
@@ -29,7 +29,7 @@ void ServerConfig::parseInfo(vector<string> info)
 		set_locations(info);
 }
 
-void	ServerConfig::set_server_attr(vector<string> info)
+void	CONF::ServerConfig::set_server_attr(vector<string> info)
 {
 	if (info[0] == "listen")
 		set_ports(info);
@@ -49,7 +49,7 @@ void	ServerConfig::set_server_attr(vector<string> info)
 		set_cgi(info);
 }
 
-void	ServerConfig::printInfo()
+void	CONF::ServerConfig::printInfo()
 {
 	cout << "Ports: ";
 	for (std::vector<string>::const_iterator i = this->ports.begin(); i != this->ports.end(); ++i)
@@ -77,55 +77,54 @@ void	ServerConfig::printInfo()
 	cout << "Locations: " << endl;
 	for (int i = 0; i < this->locations.size(); i++)
     	this->locations[i].printInfoLocation();
-	cout << endl;
 	
 	cout << endl << "=============================================================================" << endl << endl;
 
 }
 
-void	ServerConfig::set_ports(vector<string> info)
+void	CONF::ServerConfig::set_ports(vector<string> info)
 {
 	for (int i = 1; i < info.size(); i++)  
         this->ports.push_back(info[i]);
 }
 
-void	ServerConfig::set_root(vector<string> info)
+void	CONF::ServerConfig::set_root(vector<string> info)
 {
 	this->root = info[1];
 }
 
-void	ServerConfig::set_index(vector<string> info)
+void	CONF::ServerConfig::set_index(vector<string> info)
 {
 	this->index = info[1];
 }
 
-void	ServerConfig::set_server_name(vector<string> info)
+void	CONF::ServerConfig::set_server_name(vector<string> info)
 {
 	this->server_name = info[1];
 }
 
-void	ServerConfig::set_client_max(vector<string> info)
+void	CONF::ServerConfig::set_client_max(vector<string> info)
 {
 	this->client_max = info[1];
 }
 
-void	ServerConfig::set_allowed_methods(vector<string> info)
+void	CONF::ServerConfig::set_allowed_methods(vector<string> info)
 {
 	for (int i = 1; i < info.size(); i++)
         this->allowed_methods.push_back(info[i]);
 }
 
-void	ServerConfig::set_error_page(vector<string> info)
+void	CONF::ServerConfig::set_error_page(vector<string> info)
 {
 	this->error_page[info[1]] = info[2];
 }
 
-void	ServerConfig::set_cgi(vector<string> info)
+void	CONF::ServerConfig::set_cgi(vector<string> info)
 {
 	this->cgi[info[1]] = info[2];
 }
 
-void	ServerConfig::set_locations(vector<string> info)
+void	CONF::ServerConfig::set_locations(vector<string> info)
 {
 	static int i = -1;
 
@@ -142,47 +141,47 @@ void	ServerConfig::set_locations(vector<string> info)
 		locations[i].parseInfoLocation(info);
 }
 
-string	ServerConfig::get_root()
+string	CONF::ServerConfig::get_root()
 {
 	return (this->root);
 }
 
-string	ServerConfig::get_index()
+string	CONF::ServerConfig::get_index()
 {
 	return (this->index);
 }
 
-string	ServerConfig::get_server_name()
+string	CONF::ServerConfig::get_server_name()
 {
 	return (this->server_name);
 }
 
-string	ServerConfig::get_client_max()
+string	CONF::ServerConfig::get_client_max()
 {
 	return (this->client_max);
 }
 
-std::vector<string>	ServerConfig::get_ports()
+std::vector<string>	CONF::ServerConfig::get_ports()
 {
 	return (this->ports);
 }
 
-std::vector<string>	ServerConfig::get_allowed_methods()
+std::vector<string>	CONF::ServerConfig::get_allowed_methods()
 {
 	return (this->allowed_methods);
 }
 
-std::map<string, string>	ServerConfig::get_error_page()
+std::map<string, string>	CONF::ServerConfig::get_error_page()
 {
 	return (this->error_page);
 }
 
-std::map<string, string>	ServerConfig::get_cgi()
+std::map<string, string>	CONF::ServerConfig::get_cgi()
 {
 	return (this->cgi);
 }
 
-std::vector<ServerLocation>	ServerConfig::get_locations()
+std::vector<ServerLocation>	CONF::ServerConfig::get_locations()
 {
 	return (this->locations);
 }

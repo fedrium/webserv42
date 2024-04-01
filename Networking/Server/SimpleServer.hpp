@@ -1,7 +1,7 @@
 #ifndef SIMPLESERVER_HPP
 #define SIMPLESERVER_HPP
 
-#include "../../webserv.hpp"
+#include "../hdelibcnetworking.hpp"
 
 namespace HDE
 {

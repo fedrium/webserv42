@@ -1,16 +1,21 @@
 #include "Config.hpp"
 
-Config::Config()
+CONF::Config::Config()
 {
 
 }
 
-Config::~Config()
+CONF::Config::~Config()
 {
 
 }
 
-void	Config::parseServers(string file)
+CONF::Config::Config(const Config &config)
+{
+	*this = config;
+}
+
+void	CONF::Config::parseServers(string file)
 {
 	std::ifstream	filestream(file.c_str());
 	string			line;
@@ -32,7 +37,7 @@ void	Config::parseServers(string file)
 	}
 }
 
-vector<string>	Config::chopString(string str)
+vector<string>	CONF::Config::chopString(string str)
 {
 	vector<string> v;
     int		start = 0;
@@ -49,7 +54,7 @@ vector<string>	Config::chopString(string str)
 	return (v);
 }
 
-void	Config::showInfo()
+void	CONF::Config::showInfo()
 {
 	for (int i = 0; i < this->servers.size(); i++)
 		this->servers[i].printInfo();

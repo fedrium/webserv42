@@ -2,6 +2,12 @@
 #define SERVER_HPP
 
 #include "SimpleServer.hpp"
+#include "../../srcs/srcs.hpp"
+
+namespace CONF
+{
+	class Config;
+}
 
 namespace HDE
 {
@@ -16,7 +22,8 @@ namespace HDE
 			void responder();
 
 		public:
-			Server();
+			CONF::Config	*config;
+			Server(CONF::Config	*config);
 			void launch();
 	};
 }

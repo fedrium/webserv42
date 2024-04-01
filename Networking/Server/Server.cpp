@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-HDE::Server::Server() : SimpleServer (AF_INET, SOCK_STREAM, 0, 80, INADDR_ANY, 10)
+HDE::Server::Server(CONF::Config *servers) : SimpleServer (AF_INET, SOCK_STREAM, 0, 80, INADDR_ANY, 10), config(config)
 {
 	launch();
 }

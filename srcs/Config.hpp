@@ -12,18 +12,22 @@ using std::vector;
 
 class ServerConfig;
 
-class Config
+namespace CONF
 {
-	private:
-		std::vector<ServerConfig>	servers;
+	class Config
+	{
+		private:
+			std::vector<ServerConfig>	servers;
 
-	public:
-		Config();
-		~Config();
+		public:
+			Config();
+			~Config();
+			Config(const Config &config);
 
-		void				showInfo();
-		void				parseServers(string file);
-		vector<string>		chopString(string str);
-};
+			void				showInfo();
+			void				parseServers(string file);
+			vector<string>		chopString(string str);
+	};
+}
 
 #endif

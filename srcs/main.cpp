@@ -5,9 +5,11 @@ int main(int argc, char **argv)
 	if (argc == 2)
 	{
 		string file = argv[1];
-		Config	servers;
-		servers.parseServers(file);
-		servers.showInfo();
+		CONF::Config	config;
+		config.parseServers(file);
+		config.showInfo();
+		cout << endl << "Run with sudo if permission denied since port 80 is privileged" << endl;
+		HDE::Server		servers(&config);
 	}
 	else
 		cout << "Please input: ./webserv [configuration file]" << endl;
