@@ -4,11 +4,6 @@
 #include "srcs.hpp"
 #include "ServerLocation.hpp"
 
-using std::string;
-using std::cout;
-using std::endl;
-using std::vector;
-
 class ServerLocation;
 
 namespace CONF

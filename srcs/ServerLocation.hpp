@@ -3,11 +3,6 @@
 
 #include "srcs.hpp"
 
-using std::string;
-using std::cout;
-using std::endl;
-using std::vector;
-
 class ServerLocation
 {
 	private:

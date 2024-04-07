@@ -4,12 +4,6 @@
 #include "srcs.hpp"
 #include "ServerConfig.hpp"
 
-using std::string;
-using std::cout;
-using std::endl;
-using std::map;
-using std::vector;
-
 class ServerConfig;
 
 namespace CONF
