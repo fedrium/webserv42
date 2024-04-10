@@ -13,7 +13,7 @@ void HDE::Server::accepter()
 		(struct sockaddr *)&address, (socklen_t *)&addrlen);
 	read(new_socket, buffer, sizeof(buffer));
 	
-	vector<string> tmpHeaderVector = chopString(buffer, " ");
+	vector<string> tmpHeaderVector = chopString(buffer, " \n");
 	header.clear();
 	content.clear();
 	for (int i = 0; i != 3; i++)
@@ -25,15 +25,15 @@ void HDE::Server::accepter()
 
 void HDE::Server::handler()
 {
-	cout << "Header: ";
-	for (int i = 0; i != 3; i++)
+	cout << "HHeader: ";
+	for (int i = 0; i != header.size(); i++)
 		cout << header[i] << " ";
 	cout << endl;
 }
 
 void HDE::Server::responder()
 {
-	if (header[1] == "GET")
+	if (header[0] == "GET")
 		handleGet(new_socket);
 }
 
