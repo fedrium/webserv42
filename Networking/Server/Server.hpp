@@ -9,6 +9,8 @@ namespace CONF
 	class Config;
 }
 
+using CONF::Config;
+
 namespace HDE
 {
 	class Server : public SimpleServer
@@ -17,7 +19,9 @@ namespace HDE
 			char buffer[30000] = {0};
 			int new_socket;
 
-			vector<string> header;
+			vector<string>	header;
+			vector<string>	content;
+			string			extension;
 
 			void accepter();
 			void handler();
@@ -26,9 +30,15 @@ namespace HDE
 		public:
 			CONF::Config	*config;
 			Server(CONF::Config	*config);
-			void launch();
 
+			// Server.cpp
+			void launch();
 			vector<string>	chopString(string str, string delimiter);
+
+			// Get.cpp
+			void handleGet(int socket);
+			void errorPage (int socket);
+			void poo(int socket, string extension);
 	};
 }
 

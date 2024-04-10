@@ -11,7 +11,7 @@ namespace CONF
 	class Config
 	{
 		private:
-			std::vector<ServerConfig>	servers;
+			vector<ServerConfig>	servers;
 
 		public:
 			Config();
@@ -21,6 +21,7 @@ namespace CONF
 			void				showInfo();
 			void				parseServers(string file);
 			vector<string>		chopString(string str);
+			vector<ServerConfig>	getServers();
 	};
 }
 
