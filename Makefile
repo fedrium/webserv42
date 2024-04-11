@@ -2,7 +2,7 @@ SOCKET_DIR	= Networking/Sockets
 SOCKET_FILE	= SimpleSocket.cpp BindingSocket.cpp ConnectingSocket.cpp ListeningSocket.cpp
 
 SERVER_DIR	= Networking/Server
-SERVER_FILE	= Server.cpp SimpleServer.cpp Get.cpp
+SERVER_FILE	= Server.cpp SimpleServer.cpp Get.cpp Post.cpp
 
 SRCS_DIR = srcs/
 SRCS_FILE = Config.cpp ServerConfig.cpp ServerLocation.cpp main.cpp

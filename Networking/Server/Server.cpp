@@ -15,12 +15,13 @@ void HDE::Server::accepter()
 	
 	vector<string> tmpHeaderVector = chopString(buffer, " \n");
 	header.clear();
-	content.clear();
 	for (int i = 0; i != 3; i++)
 		header.push_back(tmpHeaderVector[i]);
-	for (int i = 3; i != tmpHeaderVector.size(); i++)
-		content.push_back(tmpHeaderVector[i]);
-
+	
+	vector<string> tmpContentVector = chopString(buffer, "\n");
+	content.clear();
+	for (int i = 1; i < tmpContentVector.size(); i++)
+		content.push_back(tmpContentVector[i]);
 }
 
 void HDE::Server::handler()
@@ -35,6 +36,8 @@ void HDE::Server::responder()
 {
 	if (header[0] == "GET")
 		handleGet(new_socket);
+	else if (header[0] == "POST")
+		handlePost(new_socket);
 }
 
 void HDE::Server::launch()

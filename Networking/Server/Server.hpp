@@ -19,8 +19,8 @@ namespace HDE
 			char buffer[30000] = {0};
 			int new_socket;
 
-			vector<string>	header;
-			vector<string>	content;
+			vector<string>		header;
+			vector<string>		content;
 			string			extension;
 
 			void accepter();
@@ -38,7 +38,11 @@ namespace HDE
 			// Get.cpp
 			void handleGet(int socket);
 			void errorPage (int socket);
-			void poo(int socket, string extension);
+			void html(int socket, string extension);
+			void png(int socket, string extension);
+
+			// Post.cpp
+			void handlePost(int socket);
 	};
 }
 
