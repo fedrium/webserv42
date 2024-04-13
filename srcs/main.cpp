@@ -7,8 +7,8 @@ int main(int argc, char **argv)
 		string file = argv[1];
 		CONF::Config	config;
 		config.parseServers(file);
-		config.showInfo();
-		cout << endl << "Run with sudo if permission denied since port 80 is privileged" << endl;
+		// config.showInfo();
+		cout << "Run with sudo if permission denied since port 80 is privileged" << endl;
 		HDE::Server		servers(&config);
 	}
 	else

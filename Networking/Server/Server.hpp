@@ -43,6 +43,10 @@ namespace HDE
 
 			// Post.cpp
 			void handlePost(int socket);
+			void doLogin(int socket, string uname, string pwd);
+			void doRegister(int socket, string uname, string pwd);
+			void doUnregister(int socket, string uname, string pwd);
+
 	};
 }
 

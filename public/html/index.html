@@ -1,21 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <title>Login or Register</title>
 </head>
-<body>
-    <h2>Login</h2>
+<body onload="resetForm()">
+    <h2>Login or Register</h2>
 
-    <form action="/submit_login" method="post">
+    <form id="myForm" action="/login" method="post" autocomplete="off">
         <div class="container">
-            <label for="uname"><b>Username</b></label>
-            <input type="text" placeholder="Enter Username" name="uname" required>
+            <label for="uname"><b>Username</b></label><br>
+            <input type="text" placeholder="Enter Username" name="uname" required autocomplete="off"><br>
 
-            <label for="psw"><b>Password</b></label>
-            <input type="password" placeholder="Enter Password" name="psw" required>
+            <label for="psw"><b>Password</b></label><br>
+            <input type="password" placeholder="Enter Password" name="psw" required autocomplete="off"><br>
 
-            <button type="submit">Login</button>
+            <button type="submit">Login</button><br>
         </div>
     </form>
+
+    <form action="/register" method="post" autocomplete="off">
+        <div class="container">
+            <button type="submit">Register</button><br>
+        </div>
+    </form>
+
+    <script>
+    function resetForm() {
+        document.getElementById("myForm").reset();
+    }
+    </script>
 </body>
 </html>
+
