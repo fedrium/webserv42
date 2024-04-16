@@ -2,7 +2,10 @@
 
 void HDE::Server::handlePost(int socket)
 {
-	cout << this->content.back() << endl;
+	// cout << this->content.back() << endl;
+	    for (int i = 0; i < content.size(); i++) {
+        cout << content[i] << endl;
+			}
 	if (header[1] == "/login" || header[1] == "/register")
 	{
 		string userInput, userUsername, userPassword;

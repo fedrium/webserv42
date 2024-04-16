@@ -2,6 +2,18 @@
 <html>
 <head>
     <title>Login or Register</title>
+	<script>
+		(function () {
+			window.onpageshow = function(event) {
+				if (event.persisted) {
+					window.location.reload(true);
+				}
+			};
+		})();
+	</script>
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="0">
 </head>
 <body onload="resetForm()">
     <h2>Login or Register</h2>
@@ -13,6 +25,9 @@
 
             <label for="psw"><b>Password</b></label><br>
             <input type="password" placeholder="Enter Password" name="psw" required autocomplete="off"><br>
+
+			<label for="nil"><b>NULL</b></label><br>
+            <input type="null" placeholder="Do not fill" name="nil" required autocomplete="off"><br>
 
             <button type="submit">Login</button><br>
         </div>
