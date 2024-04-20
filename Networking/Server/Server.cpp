@@ -30,6 +30,9 @@ void HDE::Server::handler()
 	for (int i = 0; i != header.size(); i++)
 		cout << header[i] << " ";
 	cout << endl;
+	// for (int i = 0; i < content.size(); i++) {
+	// cout << content[i] << endl;
+	// 	}
 }
 
 void HDE::Server::responder()
@@ -38,6 +41,8 @@ void HDE::Server::responder()
 		handleGet(new_socket);
 	else if (header[0] == "POST")
 		handlePost(new_socket);
+	else
+		error(new_socket, "405");
 }
 
 void HDE::Server::launch()

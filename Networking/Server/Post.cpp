@@ -2,21 +2,22 @@
 
 void HDE::Server::handlePost(int socket)
 {
-	// cout << this->content.back() << endl;
-	    for (int i = 0; i < content.size(); i++) {
-        cout << content[i] << endl;
-			}
 	if (header[1] == "/login" || header[1] == "/register")
 	{
 		string userInput, userUsername, userPassword;
 
 		userInput = this->content.back();
 		vector<string> tmpInfo1 = chopString(userInput, "&");
-		userUsername = chopString(tmpInfo1[0], "=")[1];
-		userPassword = chopString(tmpInfo1[1], "=")[1];
 
 		cout << userInput << endl;
-		cout << userPassword << endl;
+
+		if (tmpInfo1.size() != 3)
+			return error(socket, "400");
+		if (chopString(tmpInfo1[0], "=").size() != 2 || chopString(tmpInfo1[1], "=").size() != 2)
+			return error(socket, "400");
+
+		userUsername = chopString(tmpInfo1[0], "=")[1];
+		userPassword = chopString(tmpInfo1[1], "=")[1];
 
 		if (header[1] == "/login")
 			doLogin(socket, userUsername, userPassword);
@@ -38,25 +39,32 @@ void HDE::Server::doLogin(int socket, string uname, string pwd)
 			validLogin = 1;
 	}
 	if (validLogin)
-	{
-		header[1] = "/i_forgor.png";
-		png(socket, ".png");
-	}
+		png(socket, "/i_forgor.png");
 	else
-	{
-		header[1] = "/login_fail.html";
-		html(socket, ".html");
-	}
+		html(socket, "/login_fail.html");
 }
 
 void HDE::Server::doRegister(int socket, string uname, string pwd)
 {
 	std::ofstream csvFile;
+	std::ifstream cmpCsvFile;
+	string line, unameRegged;
+	cmpCsvFile.open("./database/login.csv");
+	while (std::getline(cmpCsvFile, line))
+	{
+		unameRegged = chopString(line, ",")[0];
+		if (uname == unameRegged)
+		{
+			html(socket, "/acc_exists.html");
+			cmpCsvFile.close();
+			return;
+		}
+	}
+	cmpCsvFile.close();
     csvFile.open("./database/login.csv", std::ios::out | std::ios::app);
     csvFile << uname << "," << pwd << endl;
 	csvFile.close();
-	header[1] = "/reg_success.html";
-	html(socket, ".html");
+	html(socket, "/reg_success.html");
 }
 
 void HDE::Server::doUnregister(int socket, string uname, string pwd)

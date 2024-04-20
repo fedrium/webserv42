@@ -37,9 +37,10 @@ namespace HDE
 
 			// Get.cpp
 			void handleGet(int socket);
-			void errorPage (int socket);
-			void html(int socket, string extension);
-			void png(int socket, string extension);
+			void error(int socket, string type);
+			void html(int socket, string new_url);
+			void png(int socket, string new_url);
+			void ico(int socket, string new_url);
 
 			// Post.cpp
 			void handlePost(int socket);
