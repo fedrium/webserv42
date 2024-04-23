@@ -4,16 +4,11 @@ void HDE::Server::handleGet(int socket)
 {
 	vector<string> validLocations;
 
-	if (header[1].find_last_of('.') != string::npos)
-		extension = header[1].substr(header[1].find_last_of('.'), string::npos);
 	if (header[1] == "/")
-	{
 		html(socket, "/index.html");
-		return;
-	}
-	if (extension == ".html")
+	else if (header[1].find(".html") != string::npos)
 		html(socket, "");
-	else if (extension == ".ico")
+	else if (header[1].find(".ico") != string::npos)
 		ico(socket, "");
 	else
 		error(socket, "404");
