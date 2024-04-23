@@ -41,6 +41,8 @@ void HDE::Server::responder()
 		handleGet(new_socket);
 	else if (header[0] == "POST")
 		handlePost(new_socket);
+	else if (header[0] == "DELETE")
+		handleDelete(new_socket);
 	else
 		error(new_socket, "405");
 }

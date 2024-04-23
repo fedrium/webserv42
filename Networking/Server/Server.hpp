@@ -48,6 +48,9 @@ namespace HDE
 			void doRegister(int socket, string uname, string pwd);
 			void doUnregister(int socket, string uname, string pwd);
 
+			// Delete.cpp
+			void handleDelete(int socket);
+
 	};
 }
 
