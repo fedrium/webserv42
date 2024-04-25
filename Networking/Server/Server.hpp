@@ -41,6 +41,7 @@ namespace HDE
 			void html(int socket, string new_url);
 			void png(int socket, string new_url);
 			void ico(int socket, string new_url);
+			void cgi(int socket);
 
 			// Post.cpp
 			void handlePost(int socket);

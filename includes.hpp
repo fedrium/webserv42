@@ -15,6 +15,8 @@
 #include <vector>
 #include <fstream>
 #include <exception>
+#include <sys/wait.h>
+#include <errno.h>
 
 using std::cout;
 using std::endl;
