@@ -36,7 +36,7 @@ void HDE::Server::error(int socket, string type)
 	}
 	else
 		perror("Can't open error file\n");
-	close(socket);
+	// close(socket);
 }
 
 void HDE::Server::html(int socket, string new_url)
@@ -60,7 +60,7 @@ void HDE::Server::html(int socket, string new_url)
 		if (res < 0)
 			perror("Can't send html file\n");
 		file.close();
-		close(socket);
+		// close(socket);
 	}
 	else
 		error(socket, "404");
@@ -91,7 +91,7 @@ void HDE::Server::png(int socket, string new_url)
 	else
 		perror("Can't open png file\n");
 	file.close();
-	close(socket);
+	// close(socket);
 }
 
 void HDE::Server::ico(int socket, string new_url)
@@ -114,9 +114,9 @@ void HDE::Server::ico(int socket, string new_url)
 		int res = send(socket, returnClient.c_str(), returnClient.size(), 0);
 		if (res < 0)
 			perror("Can't send ico file\n");
+		file.close();	
 	}
 	else
 		perror("Can't open ico file\n");
-	file.close();
-	close(socket);
+	// close(socket);
 }

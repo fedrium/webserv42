@@ -6,5 +6,5 @@ void HDE::Server::handleDelete(int socket)
 	deletePath = "./database/files" + header[1];
 	command = "rm " + deletePath;
 	system(command.c_str());
-	close(socket);
+	// close(socket);
 }

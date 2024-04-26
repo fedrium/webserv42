@@ -15,6 +15,7 @@
 #include <vector>
 #include <fstream>
 #include <exception>
+#include <poll.h>
 
 using std::cout;
 using std::endl;

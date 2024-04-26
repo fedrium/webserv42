@@ -11,7 +11,7 @@ void HDE::Server::handlePost(int socket)
 
 		cout << userInput << endl;
 
-		if (tmpInfo1.size() != 3)
+		if (tmpInfo1.size() < 3)
 			return error(socket, "400");
 		if (chopString(tmpInfo1[0], "=").size() != 2 || chopString(tmpInfo1[1], "=").size() != 2)
 			return error(socket, "400");

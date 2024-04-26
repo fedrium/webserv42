@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="0">
+</head>
+<body onload="resetForm()">
+    <h2>Login</h2>
+
+    <form id="myForm" action="/login" method="get" autocomplete="off">
+        <div class="container">
+            <label for="uname">Username</label><br>
+            <input type="text" name="uname" required autocomplete="off"><br>
+
+            <label for="psw">Password</label><br>
+            <input type="password" name="psw" required autocomplete="off"><br>
+
+			<label for="overflow"></label><br>
+            <input type="hidden" name="overflow"><br>
+
+            <button type="submit">Login</button><br>
+        </div>
+    </form>
+
+	<div class="container">
+		<label for="psw">New User?</label><br>
+		<a href="register.html">Register for an account</a>
+	</div>
+
+    <script>
+    function resetForm() {
+        document.getElementById("myForm").reset();
+    }
+    </script>
+</body>
+</html>
