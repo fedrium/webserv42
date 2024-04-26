@@ -135,7 +135,10 @@ void HDE::Server::cgi(int socket)
 	std::string output;
 	int bytes_read;
 	char *var[] = {(char *)header[1].c_str(), NULL};
+	int stdout_fd = dup(1), stdin_fd = dup(0);
 
+	output.append("HTTP/1.1 200 OK\r\n");
+	output.append("Content-Type: text/html\r\n\r\n");
 
 	int fd[2];
 
@@ -146,7 +149,7 @@ void HDE::Server::cgi(int socket)
 	{
 		dup2(fd[1], 1);
 		close(fd[0]);
-		execve("./public/cgi/display.py", var, 0);
+		execve("./public/cgi/upload.py", var, 0);
 		perror(strerror(errno));
 		std::cerr << "execve failed" << std::endl;
 		exit(1);
@@ -159,8 +162,11 @@ void HDE::Server::cgi(int socket)
 		ssize_t bytes_read;
 		while ((bytes_read = read(fd[0], buffer, 1000)) > 0)
 			output.append(buffer, bytes_read);
-		// std::cout << output;
+		std::cout << output;
 		close(fd[0]);
 	}
+	dup2(stdout_fd, 1);
+	dup2(stdin_fd, 0);
 	send(socket, output.c_str(), output.size(), 0);
+	close(socket);
 }
