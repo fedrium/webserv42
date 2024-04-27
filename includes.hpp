@@ -18,6 +18,7 @@
 #include <fstream>
 #include <exception>
 #include <poll.h>
+#include <algorithm>
 
 using std::cout;
 using std::endl;

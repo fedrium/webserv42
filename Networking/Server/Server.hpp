@@ -16,13 +16,19 @@ namespace HDE
 	class Server : public SimpleServer
 	{
 		private:
-			char buffer[30000] = {0};
+			char buffer[50000] = {0};
 			int new_socket;
 
 			vector<string>		header;
 			vector<string>		misc;
 			string			content;
 			string			extension;
+			string			filename;
+			string			content_length;
+			string			bound;
+			string			bound_one;
+			vector<string>	temp_body;
+			string			body;
 
 			void accepter();
 			void handler();
@@ -52,6 +58,7 @@ namespace HDE
 			// Post.cpp
 			void handlePost(int socket);
 			void dataHandle(int socket);
+			void parsebody();
 
 			// Delete.cpp
 			void handleDelete(int socket);
