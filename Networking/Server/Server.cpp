@@ -40,7 +40,12 @@ void HDE::Server::responder()
 	if (header[0] == "GET")
 		handleGet(new_socket);
 	else if (header[0] == "POST")
+	{
+		vector<string>::iterator ptr;
+		for(ptr = content.begin(); ptr < content.end(); ptr++)
+			std::cout << *ptr << std::endl;
 		handlePost(new_socket);
+	}
 	else
 		error(new_socket, "405");
 }
