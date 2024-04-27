@@ -19,9 +19,18 @@ void HDE::Server::accepter()
 		header.push_back(tmpHeaderVector[i]);
 	
 	vector<string> tmpContentVector = chopString(buffer, "\n");
-	content.clear();
+	misc.clear();
 	for (int i = 1; i < tmpContentVector.size(); i++)
-		content.push_back(tmpContentVector[i]);
+		misc.push_back(tmpContentVector[i]);
+
+	content = "";
+	int i = -1;
+	while (++i < misc.size())
+		if (misc[i].find("--") == 0)
+			break;
+	if (i < misc.size())
+		for (int j = i; j < misc.size(); j++)
+			content += misc[j].append("\n");
 }
 
 void HDE::Server::handler()
@@ -30,9 +39,6 @@ void HDE::Server::handler()
 	for (int i = 0; i != header.size(); i++)
 		cout << header[i] << " ";
 	cout << endl;
-	// for (int i = 0; i < content.size(); i++) {
-	// cout << content[i] << endl;
-	// 	}
 }
 
 void HDE::Server::responder()

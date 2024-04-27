@@ -4,6 +4,8 @@
 #include <cstring>
 #include <stdio.h>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <netinet/in.h>
 #include <stdlib.h>
 #include <string>

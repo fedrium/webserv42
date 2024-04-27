@@ -20,7 +20,8 @@ namespace HDE
 			int new_socket;
 
 			vector<string>		header;
-			vector<string>		content;
+			vector<string>		misc;
+			string			content;
 			string			extension;
 
 			void accepter();
@@ -37,16 +38,20 @@ namespace HDE
 
 			// Get.cpp
 			void handleGet(int socket);
+
+			void startLogin(int socket);
+			void doLogin(int socket, string uname, string pwd);
+			void doRegister(int socket, string uname, string pwd);
+
 			void error(int socket, string type);
 			void html(int socket, string new_url);
 			void png(int socket, string new_url);
 			void ico(int socket, string new_url);
+			void cgi(int socket);
 
 			// Post.cpp
 			void handlePost(int socket);
-			void doLogin(int socket, string uname, string pwd);
-			void doRegister(int socket, string uname, string pwd);
-			void doUnregister(int socket, string uname, string pwd);
+			void dataHandle(int socket);
 
 			// Delete.cpp
 			void handleDelete(int socket);

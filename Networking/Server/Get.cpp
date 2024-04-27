@@ -10,8 +10,72 @@ void HDE::Server::handleGet(int socket)
 		html(socket, "");
 	else if (header[1].find(".ico") != string::npos)
 		ico(socket, "");
+	else if (header[1].find("/login") != string::npos || header[1].find("/register") != string::npos)
+		startLogin(socket);
 	else
 		error(socket, "404");
+}
+
+void HDE::Server::startLogin(int socket)
+{
+	string userInput, userUsername, userPassword;
+
+	userInput = chopString(header[1], "?")[1];
+	vector<string> tmpInfo1 = chopString(userInput, "&");
+
+	if (tmpInfo1.size() < 3)
+		return error(socket, "400");
+	if (chopString(tmpInfo1[0], "=").size() != 2 || chopString(tmpInfo1[1], "=").size() != 2)
+		return error(socket, "400");
+
+	userUsername = chopString(tmpInfo1[0], "=")[1];
+	userPassword = chopString(tmpInfo1[1], "=")[1];
+
+	if (header[1].find("/login") != string::npos)
+		doLogin(socket, userUsername, userPassword);
+	else if (header[1].find("/register") != string::npos)
+		doRegister(socket, userUsername, userPassword);
+}
+
+void HDE::Server::doLogin(int socket, string uname, string pwd)
+{
+	std::ifstream	csvFile("./database/login.csv");
+	string line, formatToCompare;
+	bool validLogin = 0;
+
+	formatToCompare = uname + "," + pwd;
+	while (std::getline(csvFile, line))
+	{
+		if (formatToCompare == line)
+			validLogin = 1;
+	}
+	if (validLogin)
+		html(socket, "/upload.html");
+	else
+		html(socket, "/login_fail.html");
+}
+
+void HDE::Server::doRegister(int socket, string uname, string pwd)
+{
+	std::ofstream csvFile;
+	std::ifstream cmpCsvFile;
+	string line, unameRegged;
+	cmpCsvFile.open("./database/login.csv");
+	while (std::getline(cmpCsvFile, line))
+	{
+		unameRegged = chopString(line, ",")[0];
+		if (uname == unameRegged)
+		{
+			html(socket, "/acc_exists.html");
+			cmpCsvFile.close();
+			return;
+		}
+	}
+	cmpCsvFile.close();
+    csvFile.open("./database/login.csv", std::ios::out | std::ios::app);
+    csvFile << uname << "," << pwd << endl;
+	csvFile.close();
+	html(socket, "/reg_success.html");
 }
 
 void HDE::Server::error(int socket, string type)
