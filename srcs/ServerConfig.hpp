@@ -44,7 +44,7 @@ namespace CONF
 			string	get_index();
 			string	get_server_name();
 			string	get_client_max();
-			std::vector<string>				get_ports();
+			const std::vector<string>				get_ports() const;
 			std::vector<string>				get_allowed_methods();
 			std::map<string, string>		get_error_page();
 			std::map<string, string>		get_cgi();

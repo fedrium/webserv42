@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Upload File Example</title>
-</head>
-<body>
-	<h2>Upload Files</h2>
-	<form action="/upload.py" method="post" enctype="multipart/form-data">
-    <input type="file" name="filename" id="filename"><br>
-    <input type="submit" value="Upload">
-  </form>
-</body>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>File Upload</title>
+	</head>
+	<body>
+		<form action="upload.py" method="post" enctype="multipart/form-data"> <input type="file" name="filename">
+			<input type="submit">
+		</form>
+	</body>
 </html>

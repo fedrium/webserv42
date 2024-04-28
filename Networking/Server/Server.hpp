@@ -1,39 +1,45 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "SimpleServer.hpp"
 #include "../../srcs/srcs.hpp"
+
+const int BUFFER_SIZE = 1024;
 
 namespace CONF
 {
 	class Config;
+	class ServerConfig;
 }
 
 using CONF::Config;
 
 namespace HDE
 {
-	class Server : public SimpleServer
+	class Server
 	{
 		private:
-			char buffer[30000] = {0};
-			int new_socket;
+			int target_socket;
+			const CONF::ServerConfig	*config;
 
-			vector<string>		header;
-			vector<string>		misc;
-			string			content;
-			string			extension;
+			vector<string>	header;
+			string			headers;
+			string			content;	
 
-			void accepter();
+		public:
+			Server(const CONF::ServerConfig *config, int client_fd);
+			~Server();
+
+			// Server.cpp
+			int accepter();
 			void handler();
 			void responder();
 
-		public:
-			CONF::Config	*config;
-			Server(CONF::Config	*config);
+			int get_socket();
+			string	get_headers();
+			string	get_content();
+			vector<string> get_header();
+			const CONF::ServerConfig *get_config();
 
-			// Server.cpp
-			void launch();
 			vector<string>	chopString(string str, string delimiter);
 
 			// Get.cpp

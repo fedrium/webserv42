@@ -61,7 +61,7 @@ void	CONF::Config::showInfo()
 	cout << "Total number of servers: " << this->servers.size() << endl;
 }
 
-vector<CONF::ServerConfig>	CONF::Config::getServers()
+const vector<CONF::ServerConfig>	CONF::Config::getServers() const
 {
 	return (this->servers);
 }

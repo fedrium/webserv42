@@ -14,8 +14,6 @@ void HDE::Server::cgi(int socket)
 	vector<string> args = chopString(content, "\r\n");
 	vector<string> tmp;
 	string command, filename;
-	for (int i = 0; i < args.size(); i++)
-		cout << args[i] << endl;
 	tmp = chopString(args[1], ";");
 	filename = chopString(tmp[tmp.size() - 1], "=")[1];
 	command = "python3 public/cgi/upload.py " + filename;
