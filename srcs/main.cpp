@@ -3,7 +3,6 @@
 
 int main(int ac, char **av)
 {
-	// stop pipe from dying!!!
 	signal(SIGPIPE, SIG_IGN);
 	if (ac == 2)
 	{
