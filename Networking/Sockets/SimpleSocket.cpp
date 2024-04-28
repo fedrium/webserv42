@@ -7,20 +7,15 @@ HDE::SimpleSocket::SimpleSocket(int domain, int service, int protocol, int port,
     address.sin_addr.s_addr = htonl(interface);
 
     sock = socket(domain, service, protocol);
-	// std::cout << sock << std::endl;
 	test_connection(this->sock);
-	// std::cout << sock << std::endl;
 }
 
 void HDE::SimpleSocket::test_connection(int item_to_test)
 {
     if (item_to_test < 0)
     {
-		// std::cout << item_to_test << std::endl;
-        perror("Error");
-		// std::cout << "Errno: " << errno << std::endl;
+        perror("[ERROR]");
         exit(EXIT_FAILURE);
-		
     }
 }
 

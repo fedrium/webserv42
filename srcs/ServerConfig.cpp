@@ -161,7 +161,7 @@ string	CONF::ServerConfig::get_client_max()
 	return (this->client_max);
 }
 
-std::vector<string>	CONF::ServerConfig::get_ports()
+const std::vector<string>	CONF::ServerConfig::get_ports() const
 {
 	return (this->ports);
 }

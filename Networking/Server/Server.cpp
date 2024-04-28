@@ -1,82 +1,101 @@
 #include "Server.hpp"
 
-HDE::Server::Server(CONF::Config *servers) : SimpleServer (AF_INET, SOCK_STREAM, 0, 80, INADDR_ANY, 10), config(config)
+HDE::Server::Server(const CONF::ServerConfig *config, int client_fd)
 {
-	launch();
+	this->target_socket = client_fd;
+	this->config = config;
 }
 
-void HDE::Server::accepter()
+HDE::Server::~Server()
 {
-	struct sockaddr_in address = get_socket()->get_address();
-	int addrlen = sizeof(address);
-	new_socket = accept(get_socket()->get_sock(), 
-		(struct sockaddr *)&address, (socklen_t *)&addrlen);
-	int byteread = read(new_socket, buffer, sizeof(buffer));
-	
-	cout << "Byteread: " << byteread << std::endl;
+}
 
-	vector<string> tmpHeaderVector = chopString(buffer, " \n");
-	header.clear();
-	for (int i = 0; i != 3; i++)
-		header.push_back(tmpHeaderVector[i]);
-	
-	vector<string> tmpContentVector = chopString(buffer, "\n");
-	misc.clear();
-	for (int i = 1; i < tmpContentVector.size(); i++)
+int HDE::Server::accepter()
+{
+	string request;
+	char buffer[BUFFER_SIZE];
+	int bytesRead;
+	while ((bytesRead = read(this->target_socket, buffer, sizeof(buffer))) > 0)
 	{
-		if (!tmpContentVector[i].find("Content-Length: "))
-			this->content_length = tmpContentVector[i].substr(15, string::npos);
-		if (!tmpContentVector[i].find("----"))
-			this->bound = tmpContentVector[i];
-		misc.push_back(tmpContentVector[i]);
-	}
+		request.append(buffer, bytesRead);
+		int endOfHeader = request.find("\r\n\r\n");
+		if (endOfHeader != string::npos)
+		{
+			headers = request.substr(0, endOfHeader + 4); // is entire header
+			content = request.substr(endOfHeader + 4); // is everything after entire header
+			header.clear(); // is general header
+			for (int i = 0; i < 3; i++)
+				header.push_back(chopString(headers, " \r\n")[i]);
 
-	content = "";
-	int i = -1;
-	while (++i < misc.size())
-		if (misc[i].find("--") == 0)
+			int contentLengthPos = headers.find("Content-Length: ");
+			if (contentLengthPos != std::string::npos) // if Content-Length header is present
+			{
+				int beforeLenValuePos = contentLengthPos + string("Content-Length: ").length(); // e.g. Content-Length : (here)123
+				int afterLenValuePos = headers.find("\r\n", beforeLenValuePos); // e.g. Content-Length : 123(here)
+
+				int contentLength = atoi((headers.substr(beforeLenValuePos, afterLenValuePos - beforeLenValuePos)).c_str()); // get content length as int from string
+				while (content.size() < contentLength) // continue reading until specified length
+				{
+					if ((bytesRead = read(this->target_socket, buffer, sizeof(buffer))) > 0)
+						content.append(buffer, bytesRead);
+					else
+						break;
+				}
+			}
 			break;
-	if (i < misc.size())
-		for (int j = i; j < misc.size(); j++)
-			content += misc[j].append("\n");
-	std::cout << "content: " << content << std::endl;
+		}
+	}
+	return headers.length() + content.length();
 }
 
 void HDE::Server::handler()
 {
-	cout << "HHeader: ";
-	for (int i = 0; i != header.size(); i++)
+	cout << "[INFO] General Header Received: ----------------------" << endl;
+	for (int i = 0; i < header.size(); i++)
 		cout << header[i] << " ";
+	cout << endl;
+	cout << "[INFO] Header Received: ------------------------------" << endl;
+	cout << headers << endl;
+	cout << "[INFO] Content Received: -----------------------------" << endl;
+	cout << content << endl;
 	cout << endl;
 }
 
 void HDE::Server::responder()
 {
 	if (header[0] == "GET")
-		handleGet(new_socket);
+		handleGet(target_socket);
 	else if (header[0] == "POST")
-	{
-		// vector<string>::iterator ptr;
-		// for (ptr = misc.begin(); ptr < misc.end(); ptr++)
-		// 	cout << *ptr << std::endl;
-		handlePost(new_socket);
-	}
+		handlePost(target_socket);
 	else if (header[0] == "DELETE")
-		handleDelete(new_socket);
+		handleDelete(target_socket);
 	else
-		error(new_socket, "405");
+		error(target_socket, "405");
 }
 
-void HDE::Server::launch()
+int	HDE::Server::get_socket()
 {
-	while (true)
-	{
-		std::cout << "===== WAITING =====" << std::endl;
-		accepter();
-		handler();
-		responder();
-		std::cout << "===== DONE =====" << std::endl;
-	}
+	return this->target_socket;
+}
+
+const CONF::ServerConfig *HDE::Server::get_config()
+{
+	return (config);
+}
+
+vector<string> HDE::Server::get_header()
+{
+	return (header);
+}
+
+string HDE::Server::get_headers()
+{
+	return (headers);
+}
+
+string HDE::Server::get_content()
+{
+	return (content);
 }
 
 vector<string>	HDE::Server::chopString(string str, string delimiter)

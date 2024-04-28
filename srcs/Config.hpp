@@ -21,7 +21,7 @@ namespace CONF
 			void				showInfo();
 			void				parseServers(string file);
 			vector<string>		chopString(string str);
-			vector<ServerConfig>	getServers();
+			const vector<ServerConfig>	getServers() const;
 	};
 }
 
