@@ -5,7 +5,7 @@ void HDE::Server::parsebody()
 	cout << "in" << std::endl;
 
 	char quote = '\"';
-	this->body.clear()git ;
+	this->body.clear();
 	this->filename = content.substr(content.find("filename") + 1);
 	cout << "in2" << std::endl;
 	this->filename = this->filename.substr(this->filename.find(quote) + 1, this->filename.find(quote));
