@@ -67,6 +67,7 @@ namespace HDE
 			void handlePost(int socket);
 			void dataHandle(int socket);
 			void parsebody();
+			void cutstr(size_t pos, size_t size);
 
 			// Delete.cpp
 			void handleDelete(int socket);

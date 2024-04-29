@@ -1,33 +1,32 @@
-import cgi, cgitb
+#!/usr/bin/env python3
+
 import sys
- 
-# total arguments
-path = "database/files/" + sys.argv[1]
 
-f = open(path, "a")
-i = 2
-while i in range(len(sys.argv)):
-    f.write(sys.argv[i] + "\r\n")
-    i += 1
-f.close()
+body = b''
+while True:
+    data = sys.stdin.buffer.read(1024)
+    if not data:
+        break
+    body += data
+# print(data)
 
-# #!C:\Python27\python.exe
-# print ("Content-type: text/html\n\n")
+body_arr = body.split(b'\r\n')
+bound = body_arr[0]
+filename = body_arr[1][body_arr[1].rfind(b"=") + 2:-1]
 
-# import cgi
-# import cgitb; cgitb.enable()
-# import os
 
-# form = cgi.FieldStorage()
+def findend(bound, body):
+    for i in range(len(body)):
+        if body[i:i+len(bound)+2] == bound + b'--':
+            return i
+    return -1
 
-# fileitem = form["filename"]
+end = findend(bound, body)
+start = body.find(b'\r\n\r\n') + 4
 
-# if fileitem.filename:
-# 	fn = os.path.basename(fileitem.filename)
-# 	open(fn,'wb').write(fileitem.file.read())
+output = body[start:end]
 
-# 	message = 'The file was uploaded successfully'
-# 	print (message)
-# else:
-# 	message = 'The file was not uploaded successfully'
-# 	print (message)
+
+
+with open((filename).decode('utf-8'), 'wb') as nf:
+    nf.write(output)

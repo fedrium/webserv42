@@ -185,44 +185,68 @@ void HDE::Server::ico(int socket, string new_url)
 	// close(socket);
 }
 
+char*	dynamicDup(string s)
+{
+	char *str = new char[s.length() + 1];
+	strcpy(str, s.c_str());
+	return str;
+}
+
+void HDE::Server::cutstr(size_t pos, size_t size)
+{
+	this->content.erase(pos, size);
+}
+
 void HDE::Server::cgi(int socket)
 {
 	std::cout << "URL: " << this->header[1] << std::endl;
 	std::string output;
-	int bytes_read;
-	char *var[] = {(char *)header[1].c_str(), NULL};
-	int stdout_fd = dup(1), stdin_fd = dup(0);
+	int status;
 
-	output.append("HTTP/1.1 200 OK\r\n");
-	output.append("Content-Type: text/html\r\n\r\n");
+	char **args = new char*[3];
+	args[0] = dynamicDup("/usr/bin/python3");
+	args[1] = dynamicDup("./public/cgi/upload.py");
+	args[2] = NULL;
 
-	int fd[2];
+	int readfd[2];
+	int writefd[2];
 
-	if (pipe(fd) == -1)
+	if (pipe(readfd) == -1 || pipe(writefd) == -1)
 		return;
 	int pid = fork();
 	if (pid == 0)
 	{
-		dup2(fd[1], 1);
-		close(fd[0]);
-		execve("./public/cgi/upload.py", var, 0);
+		dup2(readfd[1], STDOUT_FILENO);
+		dup2(writefd[0], STDIN_FILENO);
+		close(readfd[0]);
+		close(readfd[1]);
+		close(writefd[0]);
+		close(writefd[1]);
+
+		execve("/usr/bin/python3", args, 0);
 		perror(strerror(errno));
 		std::cerr << "execve failed" << std::endl;
 		exit(1);
 	}
 	else
 	{
-		close(fd[1]);
-		waitpid(pid, NULL, 0);
-		char buffer[1000];
-		ssize_t bytes_read;
-		while ((bytes_read = read(fd[0], buffer, 1000)) > 0)
-			output.append(buffer, bytes_read);
-		std::cout << output;
-		close(fd[0]);
+		while (!this->content.empty())
+		{
+			if (this->content.length() > BUFFER_SIZE)
+			{
+				write(writefd[1], this->content.substr(0, BUFFER_SIZE).c_str(), BUFFER_SIZE);
+				this->cutstr(0, BUFFER_SIZE);
+			}
+			else
+			{
+				write(writefd[1], this->content.c_str(), this->content.size());
+				this->cutstr(0, this->content.size());
+			}
+		}
+		close(writefd[1]);
+		close(writefd[0]);
+		close(readfd[0]);
+		close(readfd[1]);
+		waitpid(pid, &status, 0);
 	}
-	dup2(stdout_fd, 1);
-	dup2(stdin_fd, 0);
-	send(socket, output.c_str(), output.size(), 0);
-	// close(socket);
 }

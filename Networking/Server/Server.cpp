@@ -38,8 +38,6 @@ int HDE::Server::accepter()
 				{
 					if ((bytesRead = read(this->target_socket, buffer, sizeof(buffer))) > 0)
 						content.append(buffer, bytesRead);
-					else
-						break;
 				}
 			}
 			break;
@@ -57,7 +55,7 @@ void HDE::Server::handler()
 	cout << "[INFO] Header Received: ------------------------------" << endl;
 	cout << headers << endl;
 	cout << "[INFO] Content Received: -----------------------------" << endl;
-	cout << content << endl;
+	// cout << content << endl;
 	cout << endl;
 }
 

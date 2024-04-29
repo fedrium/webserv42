@@ -1,36 +1,10 @@
 #include "Server.hpp"
 
-void HDE::Server::parsebody()
-{
-	char quote = '\"';
-	this->body.clear();
-	this->filename = content.substr(content.find("filename") + 1);
-	this->filename = this->filename.substr(this->filename.find(quote) + 1, this->filename.find(quote));
-	temp_body = chopString(content, "\n");
-	vector<string>::iterator ptr;
-	int i = 0;
-	for (ptr = temp_body.begin(); ptr < temp_body.end(); ptr++)
-		i++;
-	int j = 0;
-	for (ptr = temp_body.begin(); ptr < temp_body.end(); ptr++)
-	{
-		if (j > 3 && j < i - 2)
-			this->body.append(*ptr).append("\n");
-		j++;
-	}
-
-	cout << "body: " << this->body << std::endl;
-	cout << "filename: " << this->filename << " len: " << this->content_length << std::endl;
-
-	std::fstream fs(filename, std::fstream::in | std::fstream::out | std::fstream::trunc);
-	fs << this->body;
-	fs.close();
-}
-
 void HDE::Server::handlePost(int socket)
 {
 	cout << "inhere" << std::endl;
-	parsebody();
+	// parsebody();
+	cgi(socket);
 	// error(socket, "404");
 }
 
