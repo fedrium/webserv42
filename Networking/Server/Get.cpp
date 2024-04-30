@@ -1,20 +1,5 @@
 #include "Server.hpp"
 
-string HDE::Server::get_content_type(string extension)
-{
-	if (extension == ".html" || extension == ".css" || extension == ".plain")
-		return ("text/" + extension.substr(1));
-	else if (extension == ".png" || extension == ".jpeg" || extension == ".jpg")
-		return ("image/" + extension.substr(1));
-	else if (extension == ".mp4")
-		return ("video/" + extension.substr(1));
-	else if (extension == ".mp3")
-		return ("audio/mpeg");
-	else if (extension == ".ico")
-		return ("image/x-icon");
-	return ("");
-}
-
 void HDE::Server::handleGet(int socket)
 {
 	std::stringstream	response;
@@ -102,6 +87,21 @@ void HDE::Server::handleGet(int socket)
 // 	for (vector<string>::iterator it = .begin(); it != sockfds.end(); ++it)
 // 		cout << it->second->get_port() << "  ";
 // }
+
+string HDE::Server::get_content_type(string extension)
+{
+	if (extension == ".html" || extension == ".css" || extension == ".plain")
+		return ("text/" + extension.substr(1));
+	else if (extension == ".png" || extension == ".jpeg" || extension == ".jpg")
+		return ("image/" + extension.substr(1));
+	else if (extension == ".mp4")
+		return ("video/" + extension.substr(1));
+	else if (extension == ".mp3")
+		return ("audio/mpeg");
+	else if (extension == ".ico")
+		return ("image/x-icon");
+	return ("");
+}
 
 void HDE::Server::send_chunk()
 {
