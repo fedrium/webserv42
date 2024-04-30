@@ -25,6 +25,11 @@ void	CONF::Config::parseServers(string file)
 	while (std::getline(filestream, line))
 	{
 		info = chopString(line);
+		// for (vector<string>::iterator it = info.begin(); it < info.end(); it++){
+		// 	cout << "++++++++++++++++" << endl;
+		// 	cout << *it << endl;
+		// 	cout << "++++++++++++++++" << endl;
+		// }
 		if (info.empty())
 			continue;
 		if (info[0] == "server")

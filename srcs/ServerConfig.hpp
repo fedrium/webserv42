@@ -20,6 +20,8 @@ namespace CONF
 			std::map<string, string>			error_page;
 			std::map<string, string>			cgi;
 			std::vector<ServerLocation>			locations;
+			
+			int									count;
 
 		public:
 			ServerConfig();
@@ -29,7 +31,7 @@ namespace CONF
 			void	printInfo();
 
 			void	set_server_attr(vector<string> info);
-			
+
 			void	set_ports(vector<string> info);
 			void	set_root(vector<string> info);
 			void	set_index(vector<string> info);
@@ -39,6 +41,7 @@ namespace CONF
 			void	set_error_page(vector<string> info);
 			void	set_cgi(vector<string> info);
 			void	set_locations(vector<string> info);
+			void	set_nest_locations(vector<string> info);
 
 			string	get_root();
 			string	get_index();
