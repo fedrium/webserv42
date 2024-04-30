@@ -52,7 +52,6 @@ void	HDE::Webserv::run_servers()
 		total_fds = sockfds.size() + servers.size();
 
 		cout << endl << "=============================================" << endl;
-		cout << "[INFO] Number of sockets running on  : " << sockfds.size() << endl;
 		cout << "[INFO] Number of servers active      : " << servers.size() << endl;
 		cout << "[INFO] Ports in use                  : ";
 		for (sockfd_map::iterator it = sockfds.begin(); it != sockfds.end(); ++it)
@@ -91,7 +90,11 @@ void	HDE::Webserv::run_servers()
 						cout << "[NOTICE] Sending data through fd " << fds[i].fd << endl;
 						current->handler();
 						current->responder();
-						remove_server(fds[i].fd);
+
+						if (current->get_status() == SENDING_CHUNK)
+							i--;
+						if (current->get_status() == DONE || current->get_status() == ERROR)
+							remove_server(fds[i].fd);
 					}
 					else
 					{

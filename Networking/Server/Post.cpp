@@ -5,6 +5,7 @@ void HDE::Server::handlePost(int socket)
 	cout << "inhere" << std::endl;
 	// parsebody();
 	cgi(socket);
+	this->status = DONE;
 	// error(socket, "404");
 }
 
