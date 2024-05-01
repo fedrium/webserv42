@@ -192,20 +192,35 @@ char*	dynamicDup(string s)
 	return str;
 }
 
-void HDE::Server::cutstr(size_t pos, size_t size)
-{
-	this->content.erase(pos, size);
-}
+// char** HDE::Server::query(string url)
+// {
+// 	int j = 0;
+// 	for (int i; i < url.size(); i++)
+// 		if (url[i] == '&')
+// 			j++;
+
+// 	vector<string> str;
+// 	char *array[j + 1];
+
+// 	str = chopString(url, "&");
+// 	return array;
+// }
 
 void HDE::Server::cgi(int socket)
 {
 	std::cout << "URL: " << this->header[1] << std::endl;
 	std::string output;
+
 	int status;
+
+	char **env;
+
+	// if (header[1].find("?") == std::string::npos)
+	// 	query(header[1]);
 
 	char **args = new char*[3];
 	args[0] = dynamicDup("/usr/bin/python3");
-	args[1] = dynamicDup("./public/cgi/upload.py");
+	args[1] = dynamicDup(header[1]);
 	args[2] = NULL;
 
 	int readfd[2];
@@ -224,7 +239,6 @@ void HDE::Server::cgi(int socket)
 		close(writefd[1]);
 
 		execve("/usr/bin/python3", args, 0);
-		perror(strerror(errno));
 		std::cerr << "execve failed" << std::endl;
 		exit(1);
 	}
@@ -235,12 +249,12 @@ void HDE::Server::cgi(int socket)
 			if (this->content.length() > BUFFER_SIZE)
 			{
 				write(writefd[1], this->content.substr(0, BUFFER_SIZE).c_str(), BUFFER_SIZE);
-				this->cutstr(0, BUFFER_SIZE);
+				content.erase(0, BUFFER_SIZE);
 			}
 			else
 			{
 				write(writefd[1], this->content.c_str(), this->content.size());
-				this->cutstr(0, this->content.size());
+				content.erase(0,this->content.size());
 			}
 		}
 		close(writefd[1]);

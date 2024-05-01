@@ -66,7 +66,10 @@ void HDE::Server::responder()
 	else if (header[0] == "POST")
 		handlePost(target_socket);
 	else if (header[0] == "DELETE")
+	{
 		handleDelete(target_socket);
+		cout << "IMCALLING DELTE" << std::endl;
+	}
 	else
 		error(target_socket, "405");
 }

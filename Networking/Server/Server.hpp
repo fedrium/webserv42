@@ -24,13 +24,6 @@ namespace HDE
 			vector<string>	header;
 			string			headers;
 			string			content;
-			string			extension;
-			string			filename;
-			string			content_length;
-			string			bound;
-			string			bound_one;
-			vector<string>	temp_body;
-			string			body;
 
 
 		public:
@@ -62,6 +55,7 @@ namespace HDE
 			void png(int socket, string new_url);
 			void ico(int socket, string new_url);
 			void cgi(int socket);
+			char** query(string url);
 
 			// Post.cpp
 			void handlePost(int socket);
