@@ -15,7 +15,7 @@ void HDE::SimpleSocket::test_connection(int item_to_test)
     if (item_to_test < 0)
     {
         perror("[ERROR]");
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 }
 

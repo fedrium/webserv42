@@ -105,7 +105,7 @@ void	CONF::ServerConfig::printInfo() const
     	cout << "    " << i->first << " " << i->second << endl;
 
 	cout << "Locations: " << endl;
-	for (int i = 0; i < this->locations.size(); i++)
+	for (size_t i = 0; i < this->locations.size(); i++)
     	this->locations[i].printInfoLocation();
 
 	cout << endl << "=============================================================================" << endl << endl;
@@ -114,7 +114,7 @@ void	CONF::ServerConfig::printInfo() const
 
 void	CONF::ServerConfig::set_ports(vector<string> info)
 {
-	for (int i = 1; i < info.size(); i++)
+	for (size_t i = 1; i < info.size(); i++)
         this->ports.push_back(info[i]);
 }
 
@@ -140,7 +140,7 @@ void	CONF::ServerConfig::set_client_max(vector<string> info)
 
 void	CONF::ServerConfig::set_allowed_methods(vector<string> info)
 {
-	for (int i = 1; i < info.size(); i++)
+	for (long unsigned int i = 1; i < info.size(); i++)
         this->allowed_methods.push_back(info[i]);
 }
 

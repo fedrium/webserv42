@@ -72,7 +72,7 @@ void	CONF::ServerLocation::set_root(std::vector<string> info)
 
 void	CONF::ServerLocation::set_allowed_methods(std::vector<string> info)
 {
-	for (int i = 1; i < info.size(); i++)
+	for (size_t i = 1; i < info.size(); i++)
 		this->allowed_methods.push_back(info[i]);
 }
 

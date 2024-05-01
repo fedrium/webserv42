@@ -93,7 +93,7 @@ void HDE::Server::handleGet(int socket)
 
 int HDE::Server::is_redirect(string url)
 {
-	for (int i = 0; i < config->get_locations().size(); i++)
+	for (size_t i = 0; i < config->get_locations().size(); i++)
 	{
 		if (config->get_locations()[i].get_path() == url)
 		{
@@ -263,7 +263,7 @@ void HDE::Server::error(int socket, string type)
 	returnClient.append("HTTP/1.1 200 OK\r\n");
 	returnClient.append("Content-Type: text/html\r\n\r\n");
 	filePath.append("./public/error/").append(type).append(".html");
-	file.open(filePath);
+	file.open(filePath.c_str());
 	if (file.is_open())
 	{
 		while (!file.eof())
@@ -290,7 +290,7 @@ void HDE::Server::html(int socket, string new_url)
 	if (!new_url.empty())
 		header[1] = new_url;
 	filePath.append("./public/html").append(header[1]);
-	file.open(filePath);
+	file.open(filePath.c_str());
 	if (file.is_open())
 	{
 		while (!file.eof())
@@ -323,6 +323,7 @@ void HDE::Server::cutstr(size_t pos, size_t size)
 
 void HDE::Server::cgi(int socket)
 {
+	(void)socket;
 	std::cout << "URL: " << this->header[1] << std::endl;
 	std::string output;
 	int status;

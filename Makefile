@@ -11,7 +11,7 @@ O_DIR = obj
 
 CC			= g++
 RM			= rm -rf
-CFLAGS		=
+CFLAGS		= -Wall -Wextra -Werror -std=c++98
 
 NAME		= webserv
 

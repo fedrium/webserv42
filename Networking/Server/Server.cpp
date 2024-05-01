@@ -24,7 +24,7 @@ int HDE::Server::accepter()
 	while ((bytesRead = read(this->target_socket, buffer, sizeof(buffer))) > 0)
 	{
 		request.append(buffer, bytesRead);
-		int endOfHeader = request.find("\r\n\r\n");
+		size_t endOfHeader = request.find("\r\n\r\n");
 		if (endOfHeader != string::npos)
 		{
 			headers = request.substr(0, endOfHeader + 4); // is entire header
@@ -33,13 +33,13 @@ int HDE::Server::accepter()
 			for (int i = 0; i < 3; i++)
 				header.push_back(chopString(headers, " \r\n")[i]);
 
-			int contentLengthPos = headers.find("Content-Length: ");
+			size_t contentLengthPos = headers.find("Content-Length: ");
 			if (contentLengthPos != std::string::npos) // if Content-Length header is present
 			{
 				int beforeLenValuePos = contentLengthPos + string("Content-Length: ").length(); // e.g. Content-Length : (here)123
 				int afterLenValuePos = headers.find("\r\n", beforeLenValuePos); // e.g. Content-Length : 123(here)
 
-				int contentLength = atoi((headers.substr(beforeLenValuePos, afterLenValuePos - beforeLenValuePos)).c_str()); // get content length as int from string
+				size_t contentLength = atoi((headers.substr(beforeLenValuePos, afterLenValuePos - beforeLenValuePos)).c_str()); // get content length as int from string
 				while (content.size() < contentLength) // continue reading until specified length
 				{
 					if ((bytesRead = read(this->target_socket, buffer, sizeof(buffer))) > 0)
@@ -134,8 +134,8 @@ string HDE::Server::get_content()
 vector<string>	HDE::Server::chopString(string str, string delimiter)
 {
 	vector<string> v;
-    int		start = 0;
-    int		end = 0;
+    size_t		start = 0;
+    size_t		end = 0;
 
 	while ((start = str.find_first_not_of(delimiter, end)) != string::npos)
 	{

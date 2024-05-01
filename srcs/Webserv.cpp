@@ -44,7 +44,7 @@ void	HDE::Webserv::add_sockfd(const	CONF::ServerConfig *config)
 
 void	HDE::Webserv::run_servers()
 {
-	int	total_fds;
+	size_t	total_fds;
 	Server	*current; // current server to run
 
 	while (true)
@@ -60,7 +60,7 @@ void	HDE::Webserv::run_servers()
 
 		if (poll(&fds[0], total_fds, 10*60*1000))
 		{
-			for (int i = 0; i < total_fds; ++i)
+			for (size_t i = 0; i < total_fds; ++i)
 			{
 				if (fds[i].revents == 0) // no events on any fd
 					continue;
@@ -119,6 +119,7 @@ void	HDE::Webserv::remove_server(int server_fd)
 		if ((*rm_fd).fd == server_fd)
 		{
 			fds.erase(rm_fd); // remove from polling fd list
+			// delete this->servers[server_fd]->get_config();
 			break;
 		}
 	}
