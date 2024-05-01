@@ -4,7 +4,7 @@ HDE::ServerListener::ServerListener(const CONF::ServerConfig *config, std::strin
 {
 	port = std::atoi(port_str.c_str());
 
-	this->server_config = config;
+	this->server_config = new CONF::ServerConfig(*config);
 	this->socket = new ListeningSocket(AF_INET, SOCK_STREAM, 0, port, INADDR_ANY, 10);
 }
 
@@ -39,4 +39,9 @@ int	HDE::ServerListener::get_port()
 int	HDE::ServerListener::get_socket()
 {
 	return socket->get_sock();
+}
+
+const CONF::ServerConfig *HDE::ServerListener::get_config() const
+{
+	return this->server_config;
 }

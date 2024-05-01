@@ -93,32 +93,17 @@ void HDE::Server::handleGet(int socket)
 
 int HDE::Server::is_redirect(string url)
 {
-	string path;
-	int size = config->get_locations().size();
-
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < config->get_locations().size(); i++)
 	{
-		path = config->get_locations()[i].get_path();
-		cout << path << endl;
-		if (path == url)
+		if (config->get_locations()[i].get_path() == url)
 		{
-			cout << config->get_locations()[i].get_return_url() << endl;
 			this->redirect_url = config->get_locations()[i].get_return_url();
+			if (redirect_url.empty())
+				return (0);
 			return (1);
 		}
 	}
 	return (0);
-	// vector<CONF::ServerLocation>	location = this->config->get_locations();
-
-	// for (vector<CONF::ServerLocation>::iterator it = location.begin(); it != location.end(); it++)
-	// {
-	// 	if (it->get_path() == url)
-	// 	{
-	// 		this->redirect_url = it->get_return_url();
-	// 		return (1);
-	// 	}
-	// }
-	// return (0);
 }
 
 string HDE::Server::get_content_type(string extension)

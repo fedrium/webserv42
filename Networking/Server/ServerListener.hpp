@@ -24,6 +24,7 @@ namespace HDE
 			Server *accept_connection();
 			int		get_socket();
 			int		get_port();
+			const CONF::ServerConfig *get_config() const;
 	};
 
 }

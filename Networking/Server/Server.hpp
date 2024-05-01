@@ -8,12 +8,10 @@ const int CHUNK_SIZE = 16000;
 
 namespace CONF
 {
-	class Config;
+	// class Config;
 	class ServerConfig;
-	class ServerLocation;
+	// class ServerLocation;
 }
-
-using CONF::Config;
 
 namespace HDE
 {

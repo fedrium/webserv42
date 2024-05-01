@@ -25,6 +25,7 @@ namespace CONF
 
 		public:
 			ServerConfig();
+			ServerConfig(const CONF::ServerConfig &obj);
 			~ServerConfig();
 
 			void	parseInfo(vector<string> info);

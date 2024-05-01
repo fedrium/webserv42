@@ -9,6 +9,19 @@ CONF::ServerConfig::ServerConfig()
 	this->count = 0;
 }
 
+CONF::ServerConfig::ServerConfig(const CONF::ServerConfig &obj)
+{
+	this->ports = obj.ports;
+	this->root = obj.root;
+	this->index = obj.index;
+	this->server_name = obj.server_name;
+	this->client_max = obj.client_max;
+	this->allowed_methods = obj.allowed_methods;
+	this->error_page = obj.error_page;
+	this->cgi = obj.cgi;
+	this->locations = obj.locations;
+}
+
 CONF::ServerConfig::~ServerConfig()
 {
 

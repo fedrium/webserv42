@@ -28,7 +28,6 @@ namespace HDE
 	{
 		private:
 			const CONF::Config	*configlist;
-			CONF::Config	*test;
 
 			typedef	std::vector<struct pollfd>		pollfd_vec;
 			typedef std::map<int, Server *>			server_map;
