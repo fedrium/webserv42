@@ -2,18 +2,178 @@
 
 void HDE::Server::handleGet(int socket)
 {
-	vector<string> validLocations;
+	std::stringstream	response;
+	int pathEnd;
 
 	if (header[1] == "/")
-		html(socket, "/index.html");
-	else if (header[1].find(".html") != string::npos)
-		html(socket, "");
-	else if (header[1].find(".ico") != string::npos)
-		ico(socket, "");
-	else if (header[1].find("/login") != string::npos || header[1].find("/register") != string::npos)
-		startLogin(socket);
+		header[1] = "/index.html";
+	else if ((header[1].find("/login") != string::npos || header[1].find("/register") != string::npos) && header[1].find(".html") == string::npos)
+	{
+	 	startLogin(socket);
+		this->status = DONE;
+		return;
+	}
+
+	this->extension = extract_extension(header[1]);
+	if (header[1].find("?") != string::npos)
+		pathEnd = header[1].find("?");
 	else
-		error(socket, "404");
+		pathEnd = header[1].size();
+
+	if (this->extension == ".html")
+		this->file_path = "./public/html" + header[1].substr(0, pathEnd);
+	else if (this->extension == ".ico")
+		this->file_path = "./public/ico" + header[1].substr(0, pathEnd);
+	else
+		this->file_path = "./database/files" + header[1].substr(0, pathEnd);
+
+	if (access(file_path.c_str(), R_OK) != 0)
+		this->file_path = "./public/error/404.html";
+
+	response << "HTTP/1.1 200 OK\r\n";
+	response << "Connection: keep-alive\r\n";
+	response << "Content-Type: " << get_content_type(extension) << "\r\n";
+
+	struct stat fileInfo;
+	stat(file_path.c_str(), &fileInfo);
+	if (fileInfo.st_size < BUFFER_SIZE) // no need chunking, send file in 1 go
+	{
+		string fileData;
+		std::ifstream fileO;
+		char fileBuffer[BUFFER_SIZE];
+
+		fileO.open(file_path.c_str()); // read all file data into fileData
+		if (fileO.is_open())
+		{
+			while (fileO.read(fileBuffer, sizeof(fileBuffer)))
+				fileData.append(fileBuffer, sizeof(fileBuffer));
+			fileData.append(fileBuffer, fileO.gcount()); // append remaining data that is in buffer
+			fileO.close();
+		}
+		else
+		{
+			cout << "[ERROR] Error opening file" << endl;
+			this->status = ERROR;
+			return;
+		}
+
+		response << "Content-Length: " << fileInfo.st_size << "\r\n\r\n"; // internet says its mandatory bruh
+		response << fileData; // add file data to stream
+		send_whole(this->target_socket, response.str());
+		this->status = DONE;
+		return;
+	}
+	else // file too big, send in chunks
+	{
+		cout << "[INFO] File size too large, chunking will be done..." << endl;
+		response << "Transfer-Encoding: chunked\r\n\r\n";
+		send_whole(this->target_socket, response.str());
+		this->fstream_for_chunk.open(file_path.c_str());
+		if (!this->fstream_for_chunk.is_open())
+		{
+			cout << "[ERROR] Error opening file" << endl;
+			this->status = ERROR;
+			return;
+		}
+		this->status = SENDING_CHUNK;
+		send_chunk();
+		return;
+	}
+}
+
+// int HDE::Server::is_redirect(string url)
+// {
+// 	vector<ServerLocation> locations = get_config()->get_locations();
+// 	for (vector<string>::iterator it = .begin(); it != sockfds.end(); ++it)
+// 		cout << it->second->get_port() << "  ";
+// }
+
+string HDE::Server::get_content_type(string extension)
+{
+	if (extension == ".html" || extension == ".css" || extension == ".plain")
+		return ("text/" + extension.substr(1));
+	else if (extension == ".png" || extension == ".jpeg" || extension == ".jpg")
+		return ("image/" + extension.substr(1));
+	else if (extension == ".mp4")
+		return ("video/" + extension.substr(1));
+	else if (extension == ".mp3")
+		return ("audio/mpeg");
+	else if (extension == ".ico")
+		return ("image/x-icon");
+	return ("");
+}
+
+void HDE::Server::send_chunk()
+{
+	char buffer[CHUNK_SIZE];
+	string to_send;
+	std::stringstream chunk, chunk_end;
+
+	this->chunk_times += 1;
+
+	if (!this->fstream_for_chunk.is_open())
+	{
+		cout << "[ERROR] Error opening file" << endl;
+		this->status = ERROR;
+		return;
+	}
+	if (this->fstream_for_chunk.read(buffer, CHUNK_SIZE))
+	{
+		to_send = string(buffer, sizeof(buffer));
+		chunk << std::hex << to_send.length() << std::dec << "\r\n"; // each chunk should be sent preceded by its size
+		chunk << to_send << "\r\n";
+		cout << "[NOTICE] Sending chunk number " << chunk_times << " of size " << to_send.length() << "..." << endl;
+		send_whole(this->target_socket, chunk.str());
+	}
+	else
+	{
+		to_send = string(buffer, this->fstream_for_chunk.gcount());
+		chunk << std::hex << to_send.length() << std::dec << "\r\n"; // each chunk should be sent preceded by its size
+		chunk << to_send << "\r\n";
+		cout << "[NOTICE] Sending chunk number " << chunk_times << " of size " << to_send.length() << "..." << endl;
+		this->fstream_for_chunk.close();
+		send_whole(this->target_socket, chunk.str());
+	
+		chunk_end << std::hex << 0 << std::dec << "\r\n\r\n"; // send empty string to alert client that all data is sent
+		send_whole(this->target_socket, chunk_end.str());
+		cout << "[INFO] All data chunks have been sent" << endl;
+		this->status = DONE;
+	}
+}
+
+void HDE::Server::send_whole(int socket, string data)
+{
+	const char *dataCC = data.c_str();
+	int bytesSent, dataLeft;
+	dataLeft = data.size();
+
+	while (dataLeft > 0)
+	{
+		bytesSent = send(socket, dataCC, dataLeft, 0); // send doesn't guarantee all data is sent wtf
+		if (bytesSent == -1) // which apparently is a more frequent case with non-blocking sockets
+		{
+			std::cerr << "[ERROR] Error sending data to the client. Closing connection..." << endl;
+			this->status = ERROR;
+			return;
+		}
+		dataCC += bytesSent;
+		dataLeft -= bytesSent;
+	}
+}
+
+string HDE::Server::extract_extension(string url)
+{
+	int pathEnd;
+
+	if (url.find("?") != string::npos)
+		pathEnd = url.find("?");
+	else
+		pathEnd = url.size();
+
+	if (url.find(".") != string::npos)
+		return url.substr(this->header[1].find("."), pathEnd - url.find("."));
+	else
+		return "";
 }
 
 void HDE::Server::startLogin(int socket)
@@ -131,56 +291,68 @@ void HDE::Server::html(int socket, string new_url)
 	
 }
 
-void HDE::Server::png(int socket, string new_url)
+char*	dynamicDup(string s)
 {
-	string returnClient, line, filePath;
-	std::ifstream file;
-	returnClient.append("HTTP/1.1 200 OK\r\n");
-	returnClient.append("Content-Type: image/png\r\n\r\n");
-	if (!new_url.empty())
-		header[1] = new_url;
-	filePath.append("./public/png").append(header[1]);
-	file.open(filePath);
-	if (file.is_open())
-	{
-		char img_buffer[100000];
-		while (file.read(img_buffer, sizeof(img_buffer)))
-			returnClient.append(img_buffer, sizeof(img_buffer));
-		if (file.eof())
-			returnClient.append(img_buffer, file.gcount());
-		int res = send(socket, returnClient.c_str(), returnClient.size(), 0);
-		if (res < 0)
-			perror("Can't send png file\n");
-	}
-	else
-		perror("Can't open png file\n");
-	file.close();
-	// close(socket);
+	char *str = new char[s.length() + 1];
+	strcpy(str, s.c_str());
+	return str;
 }
 
-void HDE::Server::ico(int socket, string new_url)
+void HDE::Server::cutstr(size_t pos, size_t size)
 {
-	string returnClient, line, filePath;
-	std::ifstream file;
-	returnClient.append("HTTP/1.1 200 OK\r\n");
-	returnClient.append("Content-Type: image/x-icon\r\n\r\n");
-	if (!new_url.empty())
-		header[1] = new_url;
-	filePath.append("./public/ico").append(header[1]);
-	file.open(filePath);
-	if (file.is_open())
+	this->content.erase(pos, size);
+}
+
+void HDE::Server::cgi(int socket)
+{
+	std::cout << "URL: " << this->header[1] << std::endl;
+	std::string output;
+	int status;
+
+	char **args = new char*[3];
+	args[0] = dynamicDup("/usr/bin/python3");
+	args[1] = dynamicDup("./public/cgi/upload.py");
+	args[2] = NULL;
+
+	int readfd[2];
+	int writefd[2];
+
+	if (pipe(readfd) == -1 || pipe(writefd) == -1)
+		return;
+	int pid = fork();
+	if (pid == 0)
 	{
-		char img_buffer[100000];
-		while (file.read(img_buffer, sizeof(img_buffer)))
-			returnClient.append(img_buffer, sizeof(img_buffer));
-		if (file.eof())
-			returnClient.append(img_buffer, file.gcount());
-		int res = send(socket, returnClient.c_str(), returnClient.size(), 0);
-		if (res < 0)
-			perror("Can't send ico file\n");
-		file.close();	
+		dup2(readfd[1], STDOUT_FILENO);
+		dup2(writefd[0], STDIN_FILENO);
+		close(readfd[0]);
+		close(readfd[1]);
+		close(writefd[0]);
+		close(writefd[1]);
+
+		execve("/usr/bin/python3", args, 0);
+		perror(strerror(errno));
+		std::cerr << "execve failed" << std::endl;
+		exit(1);
 	}
 	else
-		perror("Can't open ico file\n");
-	// close(socket);
+	{
+		while (!this->content.empty())
+		{
+			if (this->content.length() > BUFFER_SIZE)
+			{
+				write(writefd[1], this->content.substr(0, BUFFER_SIZE).c_str(), BUFFER_SIZE);
+				this->cutstr(0, BUFFER_SIZE);
+			}
+			else
+			{
+				write(writefd[1], this->content.c_str(), this->content.size());
+				this->cutstr(0, this->content.size());
+			}
+		}
+		close(writefd[1]);
+		close(writefd[0]);
+		close(readfd[0]);
+		close(readfd[1]);
+		waitpid(pid, &status, 0);
+	}
 }

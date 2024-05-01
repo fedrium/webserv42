@@ -4,6 +4,8 @@ HDE::Server::Server(const CONF::ServerConfig *config, int client_fd)
 {
 	this->target_socket = client_fd;
 	this->config = config;
+	this->status = NEW;
+	this->chunk_times = 0;
 }
 
 HDE::Server::~Server()
@@ -15,6 +17,10 @@ int HDE::Server::accepter()
 	string request;
 	char buffer[BUFFER_SIZE];
 	int bytesRead;
+
+	if (this->status != NEW)
+		return (1);
+
 	while ((bytesRead = read(this->target_socket, buffer, sizeof(buffer))) > 0)
 	{
 		request.append(buffer, bytesRead);
@@ -38,8 +44,6 @@ int HDE::Server::accepter()
 				{
 					if ((bytesRead = read(this->target_socket, buffer, sizeof(buffer))) > 0)
 						content.append(buffer, bytesRead);
-					else
-						break;
 				}
 			}
 			break;
@@ -50,27 +54,56 @@ int HDE::Server::accepter()
 
 void HDE::Server::handler()
 {
-	cout << "[INFO] General Header Received: ----------------------" << endl;
-	for (int i = 0; i < header.size(); i++)
-		cout << header[i] << " ";
-	cout << endl;
-	cout << "[INFO] Header Received: ------------------------------" << endl;
-	cout << headers << endl;
-	cout << "[INFO] Content Received: -----------------------------" << endl;
-	cout << content << endl;
-	cout << endl;
+	switch (this->status)
+	{
+		case NEW:
+			cout << "[INFO] General Header Received: ----------------------" << endl;
+			for (int i = 0; i < header.size(); i++)
+				cout << header[i] << " ";
+			cout << endl;
+			cout << "[INFO] Header Received: ------------------------------" << endl;
+			cout << headers << endl;
+			cout << "[INFO] Content Received: -----------------------------" << endl;
+			cout << content << endl;
+			cout << endl;
+			break;
+		case SENDING_CHUNK:
+			break;
+		case DONE:
+			break;
+		default:
+			break;
+	}
+}
+
+HDE::Status HDE::Server::get_status()
+{
+	return this->status;
 }
 
 void HDE::Server::responder()
 {
-	if (header[0] == "GET")
-		handleGet(target_socket);
-	else if (header[0] == "POST")
-		handlePost(target_socket);
-	else if (header[0] == "DELETE")
-		handleDelete(target_socket);
-	else
-		error(target_socket, "405");
+	switch (this->status)
+	{
+		case NEW:
+			if (header[0] == "GET")
+				handleGet(target_socket);
+			else if (header[0] == "POST")
+				handlePost(target_socket);
+			else if (header[0] == "DELETE")
+				handleDelete(target_socket);
+			else
+				error(target_socket, "405");
+			break;
+		case SENDING_CHUNK:
+			send_chunk();
+			break;
+		case DONE:
+			this->status = NEW;
+			break;
+		default:
+			break;
+	}
 }
 
 int	HDE::Server::get_socket()

@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include <netinet/in.h>
 #include <stdlib.h>
 #include <string>
@@ -18,6 +19,7 @@
 #include <fstream>
 #include <exception>
 #include <poll.h>
+#include <algorithm>
 
 using std::cout;
 using std::endl;
