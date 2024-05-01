@@ -5,6 +5,18 @@ void HDE::Server::handleGet(int socket)
 	std::stringstream	response;
 	int pathEnd;
 
+	cout << "[TEST]" << config->get_locations()[2].get_return_url() << endl;
+	cout << "[TEST]" << config->get_locations()[3].get_return_url() << endl;
+	if (is_redirect(header[1]))
+	{
+		response << "HTTP/1.1 302 Found\r\n";
+		response << "Location:" << this->redirect_url << "\r\n\r\n";
+		cout << "[INFO] Redirecting to " << redirect_url << " right now..." << endl;
+		send_whole(socket, response.str());
+		this->status = DONE;
+		return;
+	}
+
 	if (header[1] == "/")
 		header[1] = "/index.html";
 	else if ((header[1].find("/login") != string::npos || header[1].find("/register") != string::npos) && header[1].find(".html") == string::npos)
@@ -81,12 +93,35 @@ void HDE::Server::handleGet(int socket)
 	}
 }
 
-// int HDE::Server::is_redirect(string url)
-// {
-// 	vector<ServerLocation> locations = get_config()->get_locations();
-// 	for (vector<string>::iterator it = .begin(); it != sockfds.end(); ++it)
-// 		cout << it->second->get_port() << "  ";
-// }
+int HDE::Server::is_redirect(string url)
+{
+	string path;
+	int size = config->get_locations().size();
+
+	for (int i = 0; i < size; i++)
+	{
+		path = config->get_locations()[i].get_path();
+		cout << path << endl;
+		if (path == url)
+		{
+			cout << config->get_locations()[i].get_return_url() << endl;
+			this->redirect_url = config->get_locations()[i].get_return_url();
+			return (1);
+		}
+	}
+	return (0);
+	// vector<CONF::ServerLocation>	location = this->config->get_locations();
+
+	// for (vector<CONF::ServerLocation>::iterator it = location.begin(); it != location.end(); it++)
+	// {
+	// 	if (it->get_path() == url)
+	// 	{
+	// 		this->redirect_url = it->get_return_url();
+	// 		return (1);
+	// 	}
+	// }
+	// return (0);
+}
 
 string HDE::Server::get_content_type(string extension)
 {

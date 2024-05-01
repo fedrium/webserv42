@@ -5,5 +5,6 @@
 #include "../Networking/Server/Server.hpp"
 #include "Config.hpp"
 #include "ServerConfig.hpp"
+#include "ServerLocation.hpp"
 
 #endif

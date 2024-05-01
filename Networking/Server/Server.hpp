@@ -10,6 +10,7 @@ namespace CONF
 {
 	class Config;
 	class ServerConfig;
+	class ServerLocation;
 }
 
 using CONF::Config;
@@ -37,6 +38,7 @@ namespace HDE
 			string			file_path;
 			std::ifstream	fstream_for_chunk;
 			int				chunk_times;
+			string			redirect_url;
 
 			string			content_length;
 			string			bound;

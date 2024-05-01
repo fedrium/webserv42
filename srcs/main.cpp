@@ -11,8 +11,8 @@ int main(int ac, char **av)
 		{
 			CONF::Config	configuration;
 			configuration.parseServers(file);
-			configuration.showInfo();
-			HDE::Webserv		server(&configuration);
+			// configuration.showInfo();
+			HDE::Webserv		server(&configuration, &configuration);
 			server.run_servers();
 		}
 		catch (const std::exception &e)

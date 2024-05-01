@@ -57,15 +57,15 @@ void HDE::Server::handler()
 	switch (this->status)
 	{
 		case NEW:
-			cout << "[INFO] General Header Received: ----------------------" << endl;
-			for (int i = 0; i < header.size(); i++)
-				cout << header[i] << " ";
-			cout << endl;
-			cout << "[INFO] Header Received: ------------------------------" << endl;
-			cout << headers << endl;
-			cout << "[INFO] Content Received: -----------------------------" << endl;
-			cout << content << endl;
-			cout << endl;
+			// cout << "[INFO] General Header Received: ----------------------" << endl;
+			// for (int i = 0; i < header.size(); i++)
+			// 	cout << header[i] << " ";
+			// cout << endl;
+			// cout << "[INFO] Header Received: ------------------------------" << endl;
+			// cout << headers << endl;
+			// cout << "[INFO] Content Received: -----------------------------" << endl;
+			// cout << content << endl;
+			// cout << endl;
 			break;
 		case SENDING_CHUNK:
 			break;

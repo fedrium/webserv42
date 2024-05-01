@@ -16,22 +16,34 @@ CONF::ServerConfig::~ServerConfig()
 
 void CONF::ServerConfig::parseInfo(vector<string> info)
 {
-	static unsigned int in_location_block = 0;
+	// static unsigned int in_location_block = 0;
 
-	if (info[0] == "location" && in_location_block % 2 == 1){
+	// if (info[0] == "location" && in_location_block % 2 == 1){
+	// 	in_location_block += 1;
+	// 	set_nest_locations(info);
+	// }
+	// else if (info[0] == "location"){
+	// 	in_location_block += 1;
+	// 	set_locations(info);
+	// }
+
+	// if (info[0] == "}" && in_location_block % 2 == 1)
+	// 	in_location_block += 1;
+
+	// if (in_location_block % 2 == 0)
+	// 	set_server_attr(info);
+		static unsigned int in_location_block = 0;
+
+	if (info[0] == "location")
 		in_location_block += 1;
-		set_nest_locations(info);
-	}
-	else if (info[0] == "location"){
-		in_location_block += 1;
-		set_locations(info);
-	}
 
 	if (info[0] == "}" && in_location_block % 2 == 1)
 		in_location_block += 1;
 
 	if (in_location_block % 2 == 0)
 		set_server_attr(info);
+	else
+		set_locations(info);
 }
 
 void	CONF::ServerConfig::set_server_attr(vector<string> info)
@@ -136,7 +148,7 @@ void	CONF::ServerConfig::set_locations(vector<string> info)
 	if (!this->locations.size())
 		i = -1;
 
-	cout << "----------info::  " << info[0] << "   :: path ::  "<< info[1] << endl;
+	// cout << "----------info::  " << info[0] << "   :: path ::  "<< info[1] << endl;
 	if (info[0] == "location")
 	{
 		this->locations.push_back(ServerLocation());
@@ -155,7 +167,7 @@ void	CONF::ServerConfig::set_nest_locations(vector<string> info)
 	if (!this->locations.size())
 		i = -1;
 
-	cout << "----------info::  " << info[0] << "   :: path ::  "<< info[1] << endl;
+	// cout << "----------info::  " << info[0] << "   :: path ::  "<< info[1] << endl;
 	if (info[0] == "location")
 	{
 		this->locations.push_back(ServerLocation());
@@ -215,7 +227,7 @@ std::map<string, string>	CONF::ServerConfig::get_cgi()
 	return (this->cgi);
 }
 
-std::vector<ServerLocation>	CONF::ServerConfig::get_locations()
+const std::vector<CONF::ServerLocation>	CONF::ServerConfig::get_locations() const
 {
 	return (this->locations);
 }

@@ -51,7 +51,7 @@ namespace CONF
 			std::vector<string>				get_allowed_methods();
 			std::map<string, string>		get_error_page();
 			std::map<string, string>		get_cgi();
-			std::vector<ServerLocation>		get_locations();
+			const std::vector<ServerLocation>		get_locations() const;
 	};
 }
 
