@@ -34,7 +34,7 @@ void	CONF::ServerLocation::parseInfoLocation(vector<string> info)
 		set_client_max_body_size(info);
 }
 
-void	CONF::ServerLocation::printInfoLocation()
+void	CONF::ServerLocation::printInfoLocation() const
 {
 	cout << "   Path: " << get_path() << endl;
 	if (!get_root().empty())
@@ -106,22 +106,22 @@ const string				CONF::ServerLocation::get_path() const
 	return (this->path);
 }
 
-string				CONF::ServerLocation::get_root()
+const string				CONF::ServerLocation::get_root() const
 {
 	return (this->root);
 }
 
-vector<string>		CONF::ServerLocation::get_allowed_methods()
+const vector<string>		CONF::ServerLocation::get_allowed_methods() const
 {
 	return (this->allowed_methods);
 }
 
-string				CONF::ServerLocation::get_autoindex()
+const string				CONF::ServerLocation::get_autoindex() const
 {
 	return (this->autoindex);
 }
 
-string				CONF::ServerLocation::get_index()
+const string				CONF::ServerLocation::get_index() const
 {
 	return (this->index);
 }
@@ -131,12 +131,12 @@ const string				CONF::ServerLocation::get_return_url() const
 	return (this->return_url);
 }
 
-string				CONF::ServerLocation::get_alias()
+const string				CONF::ServerLocation::get_alias() const
 {
 	return (this->alias);
 }
 
-string				CONF::ServerLocation::get_client_max_body_size()
+const string				CONF::ServerLocation::get_client_max_body_size() const
 {
 	return (this->client_max_body_size);
 }

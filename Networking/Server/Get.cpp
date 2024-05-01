@@ -5,8 +5,6 @@ void HDE::Server::handleGet(int socket)
 	std::stringstream	response;
 	int pathEnd;
 
-	cout << "[TEST]" << config->get_locations()[2].get_return_url() << endl;
-	cout << "[TEST]" << config->get_locations()[3].get_return_url() << endl;
 	if (is_redirect(header[1]))
 	{
 		response << "HTTP/1.1 302 Found\r\n";

@@ -22,7 +22,7 @@ namespace CONF
 			~ServerLocation();
 
 			void	parseInfoLocation(vector<string> info);
-			void	printInfoLocation();
+			void	printInfoLocation() const;
 
 			void 	set_path(std::vector<string> info);
 			void 	set_root(std::vector<string> info);
@@ -34,13 +34,13 @@ namespace CONF
 			void 	set_client_max_body_size(std::vector<string> info);
 
 			const string				get_path() const;
-			string				get_root();
-			vector<string>		get_allowed_methods();
-			string				get_autoindex();
-			string				get_index();
+			const string				get_root() const;
+			const vector<string>		get_allowed_methods() const;
+			const string				get_autoindex() const;
+			const string				get_index() const;
 			const string				get_return_url() const;
-			string				get_alias();
-			string				get_client_max_body_size();
+			const string				get_alias() const;
+			const string				get_client_max_body_size() const;
 	};
 }
 

@@ -28,7 +28,7 @@ namespace CONF
 			~ServerConfig();
 
 			void	parseInfo(vector<string> info);
-			void	printInfo();
+			void	printInfo() const;
 
 			void	set_server_attr(vector<string> info);
 
@@ -43,14 +43,14 @@ namespace CONF
 			void	set_locations(vector<string> info);
 			void	set_nest_locations(vector<string> info);
 
-			string	get_root();
-			string	get_index();
-			string	get_server_name();
-			string	get_client_max();
+			const string	get_root() const;
+			const string	get_index() const;
+			const string	get_server_name() const;
+			const string	get_client_max() const;
 			const std::vector<string>				get_ports() const;
-			std::vector<string>				get_allowed_methods();
-			std::map<string, string>		get_error_page();
-			std::map<string, string>		get_cgi();
+			const std::vector<string>				get_allowed_methods() const;
+			const std::map<string, string>		get_error_page() const;
+			const std::map<string, string>		get_cgi() const;
 			const std::vector<ServerLocation>		get_locations() const;
 	};
 }

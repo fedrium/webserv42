@@ -66,7 +66,7 @@ void	CONF::ServerConfig::set_server_attr(vector<string> info)
 		set_cgi(info);
 }
 
-void	CONF::ServerConfig::printInfo()
+void	CONF::ServerConfig::printInfo() const
 {
 	cout << "Ports: ";
 	for (std::vector<string>::const_iterator i = this->ports.begin(); i != this->ports.end(); ++i)
@@ -187,22 +187,22 @@ void	CONF::ServerConfig::set_nest_locations(vector<string> info)
 		locations[i].parseInfoLocation(info);
 }
 
-string	CONF::ServerConfig::get_root()
+const string	CONF::ServerConfig::get_root() const
 {
 	return (this->root);
 }
 
-string	CONF::ServerConfig::get_index()
+const string	CONF::ServerConfig::get_index() const
 {
 	return (this->index);
 }
 
-string	CONF::ServerConfig::get_server_name()
+const string	CONF::ServerConfig::get_server_name() const
 {
 	return (this->server_name);
 }
 
-string	CONF::ServerConfig::get_client_max()
+const string	CONF::ServerConfig::get_client_max() const
 {
 	return (this->client_max);
 }
@@ -212,17 +212,17 @@ const std::vector<string>	CONF::ServerConfig::get_ports() const
 	return (this->ports);
 }
 
-std::vector<string>	CONF::ServerConfig::get_allowed_methods()
+const std::vector<string>	CONF::ServerConfig::get_allowed_methods() const
 {
 	return (this->allowed_methods);
 }
 
-std::map<string, string>	CONF::ServerConfig::get_error_page()
+const std::map<string, string>	CONF::ServerConfig::get_error_page() const
 {
 	return (this->error_page);
 }
 
-std::map<string, string>	CONF::ServerConfig::get_cgi()
+const std::map<string, string>	CONF::ServerConfig::get_cgi() const
 {
 	return (this->cgi);
 }
