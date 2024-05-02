@@ -22,6 +22,11 @@ void HDE::Server::handleGet(int socket)
 
 	if (this->extension == ".html")
 		this->file_path = "./public/html" + header[1].substr(0, pathEnd);
+	else if (this->extension == ".py")
+	{
+		this->file_path = "./public/cgi" + header[1].substr(0, pathEnd);
+		cgi(socket);
+	}
 	else if (this->extension == ".ico")
 		this->file_path = "./public/ico" + header[1].substr(0, pathEnd);
 	else
@@ -303,15 +308,19 @@ void HDE::Server::cutstr(size_t pos, size_t size)
 	this->content.erase(pos, size);
 }
 
+
+
 void HDE::Server::cgi(int socket)
 {
 	std::cout << "URL: " << this->header[1] << std::endl;
 	std::string output;
 	int status;
+	char buf[BUFFER_SIZE];
+	
 
 	char **args = new char*[3];
 	args[0] = dynamicDup("/usr/bin/python3");
-	args[1] = dynamicDup("./public/cgi/upload.py");
+	args[1] = dynamicDup(this->file_path);
 	args[2] = NULL;
 
 	int readfd[2];
@@ -330,7 +339,6 @@ void HDE::Server::cgi(int socket)
 		close(writefd[1]);
 
 		execve("/usr/bin/python3", args, 0);
-		perror(strerror(errno));
 		std::cerr << "execve failed" << std::endl;
 		exit(1);
 	}
@@ -351,8 +359,14 @@ void HDE::Server::cgi(int socket)
 		}
 		close(writefd[1]);
 		close(writefd[0]);
-		close(readfd[0]);
-		close(readfd[1]);
 		waitpid(pid, &status, 0);
+		close(readfd[1]);
+		string output;
+		while(read(readfd[0], buf, BUFFER_SIZE) > 0)
+			output.append(string(buf));
+		close(readfd[0]);
+		cout << "CGI: " << output << std::endl;
+		int res = send(socket, output.c_str(), output.size(), 0);
 	}
+	return;
 }
