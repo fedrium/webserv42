@@ -6,6 +6,7 @@ HDE::Server::Server(const CONF::ServerConfig *config, int client_fd)
 	this->config = config;
 	this->status = NEW;
 	this->chunk_times = 0;
+	this->autoindex = false;
 }
 
 HDE::Server::~Server()

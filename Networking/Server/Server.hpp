@@ -37,6 +37,7 @@ namespace HDE
 			std::ifstream	fstream_for_chunk;
 			int				chunk_times;
 			string			redirect_url;
+			bool			autoindex;
 
 			string			content_length;
 			string			bound;
@@ -69,7 +70,8 @@ namespace HDE
 			string get_content_type(string extension);
 			string extract_extension(string url);
 			void handleGet(int socket);
-			int is_redirect(string url);
+			int handle_redirect(int socket, string url);
+			string build_path(string url);
 
 			void startLogin(int socket);
 			void doLogin(int socket, string uname, string pwd);

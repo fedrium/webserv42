@@ -3,20 +3,10 @@
 void HDE::Server::handleGet(int socket)
 {
 	std::stringstream	response;
-	int pathEnd;
 
-	if (is_redirect(header[1]))
-	{
-		response << "HTTP/1.1 302 Found\r\n";
-		response << "Location:" << this->redirect_url << "\r\n\r\n";
-		cout << "[INFO] Redirecting to " << redirect_url << " right now..." << endl;
-		send_whole(socket, response.str());
-		this->status = DONE;
+	if (handle_redirect(socket, header[1]))
 		return;
-	}
 
-	if (header[1] == "/")
-		header[1] = "/index.html";
 	else if ((header[1].find("/login") != string::npos || header[1].find("/register") != string::npos) && header[1].find(".html") == string::npos)
 	{
 	 	startLogin(socket);
@@ -25,17 +15,7 @@ void HDE::Server::handleGet(int socket)
 	}
 
 	this->extension = extract_extension(header[1]);
-	if (header[1].find("?") != string::npos)
-		pathEnd = header[1].find("?");
-	else
-		pathEnd = header[1].size();
-
-	if (this->extension == ".html")
-		this->file_path = "./public/html" + header[1].substr(0, pathEnd);
-	else if (this->extension == ".ico")
-		this->file_path = "./public/ico" + header[1].substr(0, pathEnd);
-	else
-		this->file_path = "./database/files" + header[1].substr(0, pathEnd);
+	this->file_path = build_path(header[1]);
 
 	if (access(file_path.c_str(), R_OK) != 0)
 		this->file_path = "./public/error/404.html";
@@ -91,7 +71,74 @@ void HDE::Server::handleGet(int socket)
 	}
 }
 
-int HDE::Server::is_redirect(string url)
+string HDE::Server::build_path(string url)
+{
+	string base, finalPath, root = "", index = "";
+	vector<CONF::ServerLocation> locationVector = config->get_locations();
+	int baseEnd, pathEnd;
+
+	if (url.substr(1).find("/") != string::npos) // from /wow/wow.png, get [/wow]/wow.png
+		baseEnd = url.substr(1).find("/");
+	else
+		baseEnd = url.substr(1).size();
+
+	if (url.substr(1).find("?") != string::npos) // from /wow/wow.png?yea=yea, get [/wow/wow.png]?yea=yea
+		pathEnd = url.substr(1).find("?");
+	else
+		pathEnd = url.substr(1).size();
+
+	base = url.substr(0, baseEnd + 1);
+
+	for (vector<CONF::ServerLocation>::iterator it = locationVector.begin(); it != locationVector.end(); it++)
+	{
+		if (it->get_path() == base)
+		{
+			root = it->get_root();
+			if (root.empty())
+				root = config->get_root();
+			index = it->get_index();
+			if (index.empty())
+			{
+				if (it->get_autoindex() == "on")
+					this->autoindex = true;
+				else
+					index = config->get_index();
+			}
+			break;
+		}
+		else
+		{
+			root = config->get_root();
+			index = config->get_index();
+		}
+	}
+
+	if (root == config->get_root())
+		finalPath = root + url.substr(0, pathEnd + 1);
+	else
+		finalPath = root + url.substr(baseEnd + 1, pathEnd + 1);
+
+	struct stat path_stat;
+	if ((!stat(finalPath.c_str(), &path_stat) && S_ISDIR(path_stat.st_mode)) || finalPath[finalPath.length() - 1] == '/') // check if path is folder
+	{
+		if (finalPath[finalPath.length() - 1] != '/')
+			finalPath.append("/");
+		if (this->autoindex == false)
+		{
+			if (index[0] == '/')
+				finalPath = finalPath + index.substr(1);
+			else
+				finalPath = finalPath + index;
+		}
+	}
+
+	if (finalPath[0] != '.')
+		finalPath = "." + finalPath;
+	cout << "[INFO] Final path To File: " << finalPath << endl;
+	return finalPath;
+}
+
+int HDE::Server::handle_redirect(int socket, string url)
 {
 	for (size_t i = 0; i < config->get_locations().size(); i++)
 	{
@@ -100,6 +147,14 @@ int HDE::Server::is_redirect(string url)
 			this->redirect_url = config->get_locations()[i].get_return_url();
 			if (redirect_url.empty())
 				return (0);
+
+			std::stringstream response;
+
+			response << "HTTP/1.1 302 Found\r\n";
+			response << "Location:" << this->redirect_url << "\r\n\r\n";
+			cout << "[INFO] Redirecting to " << redirect_url << " right now..." << endl;
+			send_whole(socket, response.str());
+			this->status = DONE;
 			return (1);
 		}
 	}
