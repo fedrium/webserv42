@@ -2,7 +2,13 @@
 
 void HDE::Server::handlePost(int socket)
 {
-	cout << "inhere" << std::endl;
+	if (this->status == ERROR_PENDING || this->status == ERROR)
+	{
+		cout << "[ERROR] An error has been detected. Aborting request..." << endl;
+		this->status = ERROR;
+		error(socket, "413");
+		return;
+	}
 	// parsebody();
 	cgi(socket);
 	this->status = DONE;

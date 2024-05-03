@@ -19,6 +19,7 @@ namespace HDE
 		NEW,
 		SENDING_CHUNK,
 		ERROR,
+		ERROR_PENDING,
 		DONE
 	};
 
@@ -38,6 +39,7 @@ namespace HDE
 			int				chunk_times;
 			string			redirect_url;
 			bool			autoindex;
+			string			error_code;
 
 			string			content_length;
 			string			bound;
@@ -54,6 +56,8 @@ namespace HDE
 			int accepter();
 			void handler();
 			void responder();
+			
+			int get_client_max_server();
 
 			int get_socket();
 			string	get_headers();
@@ -88,6 +92,7 @@ namespace HDE
 			void dataHandle(int socket);
 			void parsebody();
 			void cutstr(size_t pos, size_t size);
+			
 
 			// Delete.cpp
 			void handleDelete(int socket);

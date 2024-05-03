@@ -7,10 +7,18 @@ void HDE::Server::handleGet(int socket)
 	if (handle_redirect(socket, header[1]))
 		return;
 
-	else if ((header[1].find("/login") != string::npos || header[1].find("/register") != string::npos) && header[1].find(".html") == string::npos)
+	if ((header[1].find("/login") != string::npos || header[1].find("/register") != string::npos) && header[1].find(".html") == string::npos)
 	{
 	 	startLogin(socket);
 		this->status = DONE;
+		return;
+	}
+
+	if (this->status == ERROR_PENDING || this->status == ERROR)
+	{
+		cout << "[ERROR] An error has been detected. Aborting request..." << endl;
+		this->status = ERROR;
+		error(socket, "413");
 		return;
 	}
 
@@ -249,6 +257,49 @@ string HDE::Server::extract_extension(string url)
 		return "";
 }
 
+// void HDE::Server::error(int socket, string error_code)
+// {
+// 	string type;
+// 	std::stringstream response;
+
+// 	response << "HTTP/1.1" << error_code << " " << type << "\r\n";
+// 	response << "Content-Type: text/html\r\n\r\n";
+// // <!DOCTYPE html>
+// // <html>
+// //   <head>
+// //     <title>ERROR 404</title>
+// //   </head>
+// //   <body>
+// // 		<h1>404 NOT FOUND</h1>
+// //   </body>
+// // </html>
+// }
+
+void HDE::Server::error(int socket, string type)
+{
+	string returnClient, line, filePath;
+	std::ifstream file;
+	returnClient.append("HTTP/1.1 200 OK\r\n");
+	returnClient.append("Content-Type: text/html\r\n\r\n");
+	filePath.append("./public/error/").append(type).append(".html");
+	file.open(filePath.c_str());
+	if (file.is_open())
+	{
+		while (!file.eof())
+		{
+			std::getline(file, line);
+			returnClient.append(line);
+		}
+		int res = send(socket, returnClient.c_str(), returnClient.size(), 0);
+		if (res < 0)
+			perror("Can't send error file\n");
+		file.close();
+	}
+	else
+		perror("Can't open error file\n");
+	// close(socket);
+}
+
 void HDE::Server::startLogin(int socket)
 {
 	string userInput, userUsername, userPassword;
@@ -309,31 +360,6 @@ void HDE::Server::doRegister(int socket, string uname, string pwd)
     csvFile << uname << "," << pwd << endl;
 	csvFile.close();
 	html(socket, "/reg_success.html");
-}
-
-void HDE::Server::error(int socket, string type)
-{
-	string returnClient, line, filePath;
-	std::ifstream file;
-	returnClient.append("HTTP/1.1 200 OK\r\n");
-	returnClient.append("Content-Type: text/html\r\n\r\n");
-	filePath.append("./public/error/").append(type).append(".html");
-	file.open(filePath.c_str());
-	if (file.is_open())
-	{
-		while (!file.eof())
-		{
-			std::getline(file, line);
-			returnClient.append(line);
-		}
-		int res = send(socket, returnClient.c_str(), returnClient.size(), 0);
-		if (res < 0)
-			perror("Can't send error file\n");
-		file.close();
-	}
-	else
-		perror("Can't open error file\n");
-	// close(socket);
 }
 
 void HDE::Server::html(int socket, string new_url)

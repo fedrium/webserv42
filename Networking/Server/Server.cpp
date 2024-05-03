@@ -41,6 +41,11 @@ int HDE::Server::accepter()
 				int afterLenValuePos = headers.find("\r\n", beforeLenValuePos); // e.g. Content-Length : 123(here)
 
 				size_t contentLength = atoi((headers.substr(beforeLenValuePos, afterLenValuePos - beforeLenValuePos)).c_str()); // get content length as int from string
+				if (get_client_max_server() && contentLength > (size_t)get_client_max_server())
+				{
+					this->status = ERROR_PENDING;
+					return headers.length();
+				}
 				while (content.size() < contentLength) // continue reading until specified length
 				{
 					if ((bytesRead = read(this->target_socket, buffer, sizeof(buffer))) > 0)
@@ -51,6 +56,32 @@ int HDE::Server::accepter()
 		}
 	}
 	return headers.length() + content.length();
+}
+
+int HDE::Server::get_client_max_server()
+{
+	if (config->get_client_max().empty() || config->get_client_max() == "0")
+		return (0);
+
+	string size, value_str, suffix;
+	size = config->get_client_max();
+	value_str = size.substr(0, size.find_first_not_of("0123456789"));
+	suffix = size.substr(size.find_first_not_of("0123456789"));
+	int value = atoi(value_str.c_str());
+
+	if (suffix == "MB" || suffix == "M")
+		value *= 1000000;
+	else if (suffix == "KB" || suffix == "K")
+		value *= 1000;
+	else if (suffix == "B")
+		value *= 1;
+	else
+	{
+		cout << "[ERROR] client_max_body_size for server has an unexpected value. Ignoring it..." << endl;
+		return (0);
+	}
+
+	return (value);
 }
 
 void HDE::Server::handler()
@@ -86,7 +117,7 @@ void HDE::Server::responder()
 {
 	switch (this->status)
 	{
-		case NEW:
+		case NEW: case ERROR_PENDING:
 			if (header[0] == "GET")
 				handleGet(target_socket);
 			else if (header[0] == "POST")
