@@ -80,6 +80,7 @@ namespace HDE
 			void png(int socket, string new_url);
 			void ico(int socket, string new_url);
 			void cgi(int socket);
+			vector<char *> queryString(string query);
 
 			// Post.cpp
 			void handlePost(int socket);

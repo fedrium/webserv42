@@ -26,7 +26,5 @@ start = body.find(b'\r\n\r\n') + 4
 
 output = body[start:end]
 
-
-
-with open((filename).decode('utf-8'), 'wb') as nf:
+with open("./database/files/" + (filename).decode('utf-8'), 'wb') as nf:
     nf.write(output)

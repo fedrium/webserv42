@@ -20,13 +20,15 @@ void HDE::Server::handleGet(int socket)
 	else
 		pathEnd = header[1].size();
 
-	if (this->extension == ".html")
-		this->file_path = "./public/html" + header[1].substr(0, pathEnd);
-	else if (this->extension == ".py")
+	if (this->extension == ".py")
 	{
 		this->file_path = "./public/cgi" + header[1].substr(0, pathEnd);
 		cgi(socket);
+		this->status = DONE;
+		return;
 	}
+	if (this->extension == ".html")
+		this->file_path = "./public/html" + header[1].substr(0, pathEnd);
 	else if (this->extension == ".ico")
 		this->file_path = "./public/ico" + header[1].substr(0, pathEnd);
 	else
@@ -308,19 +310,60 @@ void HDE::Server::cutstr(size_t pos, size_t size)
 	this->content.erase(pos, size);
 }
 
+char* char_substr(string &str, size_t start, size_t length) {
+	cout << "in" << std::endl;
+    char* result = new char[length + 1];
+    std::strncpy(result, str.c_str() + start, length);
+    result[length] = '\0';
+    
+    return result;
+}
 
+vector<char *> HDE::Server::queryString(string query)
+{
+	// cout << "test: " << query << std::endl;
+	vector<char *> res;
+	int start = 0;
+	for (int i = 0; i < query.length(); i++)
+	{
+		if (query[i] == '&')
+		{
+			res.push_back(char_substr(query, start, (i - start)));
+			start = i + 1;
+		}
+	}
+	res.push_back(char_substr(query, start, query.length() - start));
+	for (vector<char *>::iterator ptr = res.begin(); ptr < res.end(); ptr++)
+		cout << "ENV: " << *ptr << std::endl;
+	return res;
+}
 
 void HDE::Server::cgi(int socket)
 {
 	std::cout << "URL: " << this->header[1] << std::endl;
-	std::string output;
 	int status;
+	// char **env;
+	vector<char *> env;
 	char buf[BUFFER_SIZE];
 	
+	// if (header[1].find("?") != std::string::npos)
+	// 	env = queryString(header[1].substr(header[1].find("?") + 1, std::string::npos));
 
+	if (header[1].find("?") != std::string::npos)
+	{
+		env = queryString(header[1].substr(header[1].find("?") + 1, std::string::npos));
+	}
+	env.push_back(nullptr);
+	string parse_filepath, filepath;
+	filepath = this->header[1].substr(0, this->header[1].find("."));
+	filepath.append(".py");
+	parse_filepath = "./public/cgi";
+	parse_filepath.append(filepath);
+
+	string output;
 	char **args = new char*[3];
 	args[0] = dynamicDup("/usr/bin/python3");
-	args[1] = dynamicDup(this->file_path);
+	args[1] = dynamicDup(parse_filepath);
 	args[2] = NULL;
 
 	int readfd[2];
@@ -338,7 +381,7 @@ void HDE::Server::cgi(int socket)
 		close(writefd[0]);
 		close(writefd[1]);
 
-		execve("/usr/bin/python3", args, 0);
+		execve("/usr/bin/python3", args, env.data());
 		std::cerr << "execve failed" << std::endl;
 		exit(1);
 	}
@@ -361,12 +404,20 @@ void HDE::Server::cgi(int socket)
 		close(writefd[0]);
 		waitpid(pid, &status, 0);
 		close(readfd[1]);
-		string output;
-		while(read(readfd[0], buf, BUFFER_SIZE) > 0)
-			output.append(string(buf));
+		int end;
+		while (1)
+		{
+			int bytes_read = read(readfd[0], buf, BUFFER_SIZE);
+			if (bytes_read <= 0)
+				break;
+			buf[bytes_read] = '\0';
+			output.append(buf);
+		}
+		output.append("\0");
+		output.append("\r\n\r\n");
 		close(readfd[0]);
 		cout << "CGI: " << output << std::endl;
-		int res = send(socket, output.c_str(), output.size(), 0);
+		send_whole(socket, output);
 	}
 	return;
 }
