@@ -14,6 +14,13 @@ void HDE::Server::handleGet(int socket)
 		return;
 	}
 
+	else if ((header[1].find("/public/html") != string::npos))
+	{
+		create_html(socket);
+		this->status = DONE;
+		return ;
+	}
+
 	this->extension = extract_extension(header[1]);
 	if (header[1].find("?") != string::npos)
 		pathEnd = header[1].find("?");
@@ -133,7 +140,7 @@ void HDE::Server::send_chunk()
 		cout << "[NOTICE] Sending chunk number " << chunk_times << " of size " << to_send.length() << "..." << endl;
 		this->fstream_for_chunk.close();
 		send_whole(this->target_socket, chunk.str());
-	
+
 		chunk_end << std::hex << 0 << std::dec << "\r\n\r\n"; // send empty string to alert client that all data is sent
 		send_whole(this->target_socket, chunk_end.str());
 		cout << "[INFO] All data chunks have been sent" << endl;
@@ -288,7 +295,7 @@ void HDE::Server::html(int socket, string new_url)
 	}
 	else
 		error(socket, "404");
-	
+
 }
 
 char*	dynamicDup(string s)

@@ -90,6 +90,9 @@ namespace HDE
 			// Delete.cpp
 			void handleDelete(int socket);
 
+			//Autoindex.cpp
+			string encode_url(const string &value);
+			void create_html(int socket);
 	};
 }
 
