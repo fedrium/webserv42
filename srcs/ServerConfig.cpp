@@ -6,7 +6,7 @@ CONF::ServerConfig::ServerConfig()
 	this->index = "";
 	this->server_name = "localhost";
 	this->client_max = "";
-	// this->count = 0;
+	this->count = 0;
 }
 
 CONF::ServerConfig::~ServerConfig()
@@ -18,15 +18,32 @@ void CONF::ServerConfig::parseInfo(vector<string> info)
 {
 	static unsigned int in_location_block = 0;
 
+	// cout << "this is info:: " << info[0] << endl;
+	if (info[0] == "location"){
+		if (in_location_block % 2 == 1){
+			count++;
+		}
+		else
+			in_location_block += 1;
+	}
 
-	if (info[0] == "location")
+	// if (info[0] == "location" && in_location_block % 2 == 0){
+	// 	count++;
+	// 	in_location_block -= 1;
+	// }
+	if (info[0] == "}" && count % 2 == 1){
+		// cout << "in nest" << endl;
 		in_location_block += 1;
+		vector<string> tmp;
+		tmp.push_back("");
+		tmp.push_back("");
+		set_locations(tmp);
+	}
 
-	if (info[0] == "location" && in_location_block % 2 == 0)
-		in_location_block -= 1;
-
-	if (info[0] == "}" && in_location_block % 2 == 1)
+	if (info[0] == "}" && in_location_block % 2 == 1){
+		// cout << "in normal" << endl;
 		in_location_block += 1;
+	}
 
 	if (in_location_block % 2 == 0)
 		set_server_attr(info);
@@ -142,11 +159,51 @@ void	CONF::ServerConfig::set_locations(vector<string> info)
 	{
 		this->locations.push_back(ServerLocation());
 		i++;
-		// count++;
 		locations[i].set_path(info);
 	}
-	else if (this->locations.size())
+
+	else if (this->locations.size()){
+
+		// cout << "count:: " << count << endl << "count % 2 :: " << count % 2 << endl;
+		while (count % 2 == 1){
+			// cout << "incre:: " << count << endl;
+			if (info[0] == "root" || info[0] == "autoindex" || info[0] == "index"
+				|| info[0] == "return" || info[0] == "alias" || info[0] == "client_max_body_size"
+				|| info[0] == "allowed_methods")
+				break ;
+			if (locations[i].get_autoindex() == ""){
+				info[0].assign("autoindex");
+				info[1].assign(locations[i - 1].get_autoindex());
+				locations[i].parseInfoLocation(info);
+			}
+			if (locations[i].get_index() == ""){
+				info[0].assign("index");
+				info[1].assign(locations[i - 1].get_index());
+				locations[i].parseInfoLocation(info);
+			}
+			if (locations[i].get_return_url() == ""){
+				info[0].assign("return");
+				info[1].assign(locations[i - 1].get_return_url());
+				locations[i].parseInfoLocation(info);
+			}
+			if (locations[i].get_alias() == ""){
+				info[0].assign("alias");
+				info[1].assign(locations[i - 1].get_alias());
+				locations[i].parseInfoLocation(info);
+			}
+			if (locations[i].get_client_max_body_size() == ""){
+				info[0].assign("client_max_body_size");
+				info[1].assign(locations[i - 1].get_client_max_body_size());
+				locations[i].parseInfoLocation(info);
+			}
+			else
+				break ;
+			count++;
+			return ;
+		}
+		// cout << "I ran" << endl;
 		locations[i].parseInfoLocation(info);
+	}
 }
 
 // void	CONF::ServerConfig::set_nest_locations(vector<string> info)

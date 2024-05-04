@@ -21,7 +21,7 @@ namespace CONF
 			std::map<string, string>			cgi;
 			std::vector<ServerLocation>			locations;
 
-			// int									count;
+			int									count;
 
 		public:
 			ServerConfig();
