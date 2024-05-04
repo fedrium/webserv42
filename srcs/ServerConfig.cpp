@@ -6,7 +6,7 @@ CONF::ServerConfig::ServerConfig()
 	this->index = "";
 	this->server_name = "localhost";
 	this->client_max = "";
-	this->count = 0;
+	// this->count = 0;
 }
 
 CONF::ServerConfig::~ServerConfig()
@@ -18,20 +18,21 @@ void CONF::ServerConfig::parseInfo(vector<string> info)
 {
 	static unsigned int in_location_block = 0;
 
-	if (info[0] == "location" && in_location_block % 2 == 1){
+
+	if (info[0] == "location")
 		in_location_block += 1;
-		set_nest_locations(info);
-	}
-	else if (info[0] == "location"){
-		in_location_block += 1;
-		set_locations(info);
-	}
+
+	if (info[0] == "location" && in_location_block % 2 == 0)
+		in_location_block -= 1;
 
 	if (info[0] == "}" && in_location_block % 2 == 1)
 		in_location_block += 1;
 
 	if (in_location_block % 2 == 0)
 		set_server_attr(info);
+
+	else
+		set_locations(info);
 }
 
 void	CONF::ServerConfig::set_server_attr(vector<string> info)
@@ -141,39 +142,39 @@ void	CONF::ServerConfig::set_locations(vector<string> info)
 	{
 		this->locations.push_back(ServerLocation());
 		i++;
-		count++;
+		// count++;
 		locations[i].set_path(info);
 	}
 	else if (this->locations.size())
 		locations[i].parseInfoLocation(info);
 }
 
-void	CONF::ServerConfig::set_nest_locations(vector<string> info)
-{
-	static int i = -1;
+// void	CONF::ServerConfig::set_nest_locations(vector<string> info)
+// {
+// 	static int i = -1;
 
-	if (!this->locations.size())
-		i = -1;
+// 	if (!this->locations.size())
+// 		i = -1;
 
-	cout << "----------info::  " << info[0] << "   :: path ::  "<< info[1] << endl;
-	if (info[0] == "location")
-	{
-		this->locations.push_back(ServerLocation());
-		vector<string> nest;
-		nest.push_back("a");
-		string tmp;
+// 	cout << "----------info::  " << info[0] << "   :: path ::  "<< info[1] << endl;
+// 	if (info[0] == "location")
+// 	{
+// 		this->locations.push_back(ServerLocation());
+// 		vector<string> nest;
+// 		nest.push_back("a");
+// 		string tmp;
 
-		tmp.append(locations[count - 1].get_path());
+// 		tmp.append(locations[count - 1].get_path());
 
-		i++;
-		count++;
-		tmp.append(info[1]);
-		nest.push_back(tmp);
-		locations[i].set_path(nest);
-	}
-	else if (this->locations.size())
-		locations[i].parseInfoLocation(info);
-}
+// 		i++;
+// 		count++;
+// 		tmp.append(info[1]);
+// 		nest.push_back(tmp);
+// 		locations[i].set_path(nest);
+// 	}
+// 	else if (this->locations.size())
+// 		locations[i].parseInfoLocation(info);
+// }
 
 string	CONF::ServerConfig::get_root()
 {
