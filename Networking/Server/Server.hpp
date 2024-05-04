@@ -58,6 +58,10 @@ namespace HDE
 			void responder();
 			
 			int get_client_max_server();
+			string build_path(string url);
+			int is_defined_path(string conf_path, string client_path);
+			void send_error_page(int socket, string error_code);
+			string get_error_text(string error_code);
 
 			int get_socket();
 			string	get_headers();
@@ -75,16 +79,13 @@ namespace HDE
 			string extract_extension(string url);
 			void handleGet(int socket);
 			int handle_redirect(int socket, string url);
-			string build_path(string url);
+			
 
 			void startLogin(int socket);
 			void doLogin(int socket, string uname, string pwd);
 			void doRegister(int socket, string uname, string pwd);
 
-			void error(int socket, string type);
 			void html(int socket, string new_url);
-			void png(int socket, string new_url);
-			void ico(int socket, string new_url);
 			void cgi(int socket);
 
 			// Post.cpp

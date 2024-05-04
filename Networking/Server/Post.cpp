@@ -5,8 +5,9 @@ void HDE::Server::handlePost(int socket)
 	if (this->status == ERROR_PENDING || this->status == ERROR)
 	{
 		cout << "[ERROR] An error has been detected. Aborting request..." << endl;
-		this->status = ERROR;
-		error(socket, "413");
+		cout << "heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" << endl;
+		send_error_page(socket, "413");
+		this->status = DONE;
 		return;
 	}
 	// parsebody();

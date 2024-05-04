@@ -18,15 +18,15 @@ void HDE::Server::handleGet(int socket)
 	{
 		cout << "[ERROR] An error has been detected. Aborting request..." << endl;
 		this->status = ERROR;
-		error(socket, "413");
+		send_error_page(socket, "413");
 		return;
 	}
 
-	this->extension = extract_extension(header[1]);
-	this->file_path = build_path(header[1]);
-
 	if (access(file_path.c_str(), R_OK) != 0)
-		this->file_path = "./public/error/404.html";
+	{
+		send_error_page(socket, "404");
+		return;
+	}
 
 	response << "HTTP/1.1 200 OK\r\n";
 	response << "Connection: keep-alive\r\n";
@@ -57,8 +57,8 @@ void HDE::Server::handleGet(int socket)
 
 		response << "Content-Length: " << fileInfo.st_size << "\r\n\r\n"; // internet says its mandatory bruh
 		response << fileData; // add file data to stream
-		send_whole(this->target_socket, response.str());
 		this->status = DONE;
+		send_whole(this->target_socket, response.str());
 		return;
 	}
 	else // file too big, send in chunks
@@ -77,73 +77,6 @@ void HDE::Server::handleGet(int socket)
 		send_chunk();
 		return;
 	}
-}
-
-string HDE::Server::build_path(string url)
-{
-	string base, finalPath, root = "", index = "";
-	vector<CONF::ServerLocation> locationVector = config->get_locations();
-	int baseEnd, pathEnd;
-
-	if (url.substr(1).find("/") != string::npos) // from /wow/wow.png, get [/wow]/wow.png
-		baseEnd = url.substr(1).find("/");
-	else
-		baseEnd = url.substr(1).size();
-
-	if (url.substr(1).find("?") != string::npos) // from /wow/wow.png?yea=yea, get [/wow/wow.png]?yea=yea
-		pathEnd = url.substr(1).find("?");
-	else
-		pathEnd = url.substr(1).size();
-
-	base = url.substr(0, baseEnd + 1);
-
-	for (vector<CONF::ServerLocation>::iterator it = locationVector.begin(); it != locationVector.end(); it++)
-	{
-		if (it->get_path() == base)
-		{
-			root = it->get_root();
-			if (root.empty())
-				root = config->get_root();
-			index = it->get_index();
-			if (index.empty())
-			{
-				if (it->get_autoindex() == "on")
-					this->autoindex = true;
-				else
-					index = config->get_index();
-			}
-			break;
-		}
-		else
-		{
-			root = config->get_root();
-			index = config->get_index();
-		}
-	}
-
-	if (root == config->get_root())
-		finalPath = root + url.substr(0, pathEnd + 1);
-	else
-		finalPath = root + url.substr(baseEnd + 1, pathEnd + 1);
-
-	struct stat path_stat;
-	if ((!stat(finalPath.c_str(), &path_stat) && S_ISDIR(path_stat.st_mode)) || finalPath[finalPath.length() - 1] == '/') // check if path is folder
-	{
-		if (finalPath[finalPath.length() - 1] != '/')
-			finalPath.append("/");
-		if (this->autoindex == false)
-		{
-			if (index[0] == '/')
-				finalPath = finalPath + index.substr(1);
-			else
-				finalPath = finalPath + index;
-		}
-	}
-
-	if (finalPath[0] != '.')
-		finalPath = "." + finalPath;
-	cout << "[INFO] Final path To File: " << finalPath << endl;
-	return finalPath;
 }
 
 int HDE::Server::handle_redirect(int socket, string url)
@@ -257,49 +190,6 @@ string HDE::Server::extract_extension(string url)
 		return "";
 }
 
-// void HDE::Server::error(int socket, string error_code)
-// {
-// 	string type;
-// 	std::stringstream response;
-
-// 	response << "HTTP/1.1" << error_code << " " << type << "\r\n";
-// 	response << "Content-Type: text/html\r\n\r\n";
-// // <!DOCTYPE html>
-// // <html>
-// //   <head>
-// //     <title>ERROR 404</title>
-// //   </head>
-// //   <body>
-// // 		<h1>404 NOT FOUND</h1>
-// //   </body>
-// // </html>
-// }
-
-void HDE::Server::error(int socket, string type)
-{
-	string returnClient, line, filePath;
-	std::ifstream file;
-	returnClient.append("HTTP/1.1 200 OK\r\n");
-	returnClient.append("Content-Type: text/html\r\n\r\n");
-	filePath.append("./public/error/").append(type).append(".html");
-	file.open(filePath.c_str());
-	if (file.is_open())
-	{
-		while (!file.eof())
-		{
-			std::getline(file, line);
-			returnClient.append(line);
-		}
-		int res = send(socket, returnClient.c_str(), returnClient.size(), 0);
-		if (res < 0)
-			perror("Can't send error file\n");
-		file.close();
-	}
-	else
-		perror("Can't open error file\n");
-	// close(socket);
-}
-
 void HDE::Server::startLogin(int socket)
 {
 	string userInput, userUsername, userPassword;
@@ -308,9 +198,9 @@ void HDE::Server::startLogin(int socket)
 	vector<string> tmpInfo1 = chopString(userInput, "&");
 
 	if (tmpInfo1.size() < 3)
-		return error(socket, "400");
+		return send_error_page(socket, "400");
 	if (chopString(tmpInfo1[0], "=").size() != 2 || chopString(tmpInfo1[1], "=").size() != 2)
-		return error(socket, "400");
+		return send_error_page(socket, "400");
 
 	userUsername = chopString(tmpInfo1[0], "=")[1];
 	userPassword = chopString(tmpInfo1[1], "=")[1];
@@ -386,7 +276,7 @@ void HDE::Server::html(int socket, string new_url)
 		// close(socket);
 	}
 	else
-		error(socket, "404");
+		send_error_page(socket, "404");
 	
 }
 
