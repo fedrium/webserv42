@@ -1,6 +1,3 @@
-// idk what to name this
-// listen to incoming connections, then create a Server object
-
 #ifndef ServerListener_HPP
 #define ServerListener_HPP
 

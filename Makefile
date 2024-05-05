@@ -11,7 +11,7 @@ O_DIR = obj
 
 CC			= g++
 RM			= rm -rf
-CFLAGS		= -Wall -Wextra -Werror -std=c++98
+CFLAGS		= -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g
 
 NAME		= webserv
 

@@ -10,6 +10,7 @@ HDE::ServerListener::ServerListener(const CONF::ServerConfig *config, std::strin
 
 HDE::ServerListener::~ServerListener()
 {
+	delete server_config;
 }
 
 HDE::Server	*HDE::ServerListener::accept_connection()
