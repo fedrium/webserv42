@@ -11,7 +11,7 @@ int main(int ac, char **av)
 		{
 			CONF::Config	configuration;
 			configuration.parseServers(file);
-			// configuration.showInfo();
+			configuration.showInfo();
 			HDE::Webserv		server(&configuration);
 			server.run_servers();
 		}

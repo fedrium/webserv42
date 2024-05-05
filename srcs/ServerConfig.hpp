@@ -42,7 +42,6 @@ namespace CONF
 			void	set_error_page(vector<string> info);
 			void	set_cgi(vector<string> info);
 			void	set_locations(vector<string> info);
-			void	set_nest_locations(vector<string> info);
 
 			const string	get_root() const;
 			const string	get_index() const;

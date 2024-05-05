@@ -40,6 +40,7 @@ namespace HDE
 			string			redirect_url;
 			bool			autoindex;
 			string			error_code;
+			string			in_path;
 
 			string			content_length;
 			string			bound;
@@ -58,6 +59,7 @@ namespace HDE
 			void responder();
 			
 			int get_client_max_server();
+			bool is_allowed_method(string method);
 			string build_path(string url);
 			int is_defined_path(string conf_path, string client_path);
 			void send_error_page(int socket, string error_code);

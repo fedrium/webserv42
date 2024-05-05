@@ -121,11 +121,11 @@ void HDE::Server::responder()
 	switch (this->status)
 	{
 		case NEW: case ERROR_PENDING:
-			if (header[0] == "GET")
+			if (header[0] == "GET" && is_allowed_method(header[0]))
 				handleGet(target_socket);
-			else if (header[0] == "POST")
+			else if (header[0] == "POST" && is_allowed_method(header[0]))
 				handlePost(target_socket);
-			else if (header[0] == "DELETE")
+			else if (header[0] == "DELETE" && is_allowed_method(header[0]))
 				handleDelete(target_socket);
 			else
 				send_error_page(target_socket, "405");
@@ -141,6 +141,27 @@ void HDE::Server::responder()
 	}
 }
 
+bool HDE::Server::is_allowed_method(string method)
+{
+	vector<string> allowedMethodVector;
+
+	if (this->in_path.empty())
+		allowedMethodVector = config->get_allowed_methods();
+	else
+	{
+		vector<CONF::ServerLocation> locationVector = config->get_locations();
+		for (vector<CONF::ServerLocation>::iterator it = locationVector.begin(); it != locationVector.end(); it++)
+			if (it->get_path() == this->in_path && it->get_allowed_methods().size() != 0)
+				allowedMethodVector = it->get_allowed_methods();
+	}
+	if (allowedMethodVector.size() == 0)
+		allowedMethodVector = config->get_allowed_methods();
+
+	if(std::find(allowedMethodVector.begin(), allowedMethodVector.end(), method) != allowedMethodVector.end())
+		return true;
+	return false;
+}
+
 string HDE::Server::build_path(string url)
 {
 	string base, finalPath, root = "", index = "";
@@ -154,10 +175,12 @@ string HDE::Server::build_path(string url)
 
 	base = url.substr(0, pathEnd + 1);
 
+	std::sort(locationVector.begin(), locationVector.end(), CONF::ServerLocation::compareByLength);
 	for (vector<CONF::ServerLocation>::iterator it = locationVector.begin(); it != locationVector.end(); it++)
 	{
 		if ((baseEnd = is_defined_path(it->get_path(), base)))
 		{
+			this->in_path = it->get_path();
 			root = it->get_root();
 			if (root.empty())
 				root = config->get_root();

@@ -23,6 +23,7 @@ namespace CONF
 
 			void	parseInfoLocation(vector<string> info);
 			void	printInfoLocation() const;
+			static bool compareByLength(const ServerLocation &a, const ServerLocation &b);
 
 			void 	set_path(std::vector<string> info);
 			void 	set_root(std::vector<string> info);

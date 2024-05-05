@@ -60,6 +60,11 @@ void	CONF::ServerLocation::printInfoLocation() const
 		cout << "       Client max body size: " << get_client_max_body_size() << endl;
 }
 
+bool	CONF::ServerLocation::compareByLength(const ServerLocation &a, const ServerLocation &b)
+{
+	return a.get_path().length() < b.get_path().length();
+}
+
 void	CONF::ServerLocation::set_path(std::vector<string> info)
 {
 	this->path = info[1];
