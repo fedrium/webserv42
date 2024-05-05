@@ -81,13 +81,15 @@ namespace HDE
 			string extract_extension(string url);
 			void handleGet(int socket);
 			int handle_redirect(int socket, string url);
-			
 
 			void startLogin(int socket);
 			void doLogin(int socket, string uname, string pwd);
 			void doRegister(int socket, string uname, string pwd);
 
 			void html(int socket, string new_url);
+
+			// Cgi.cpp
+			vector<char *> queryString(string query);
 			void cgi(int socket);
 
 			// Post.cpp
@@ -95,7 +97,6 @@ namespace HDE
 			void dataHandle(int socket);
 			void parsebody();
 			void cutstr(size_t pos, size_t size);
-			
 
 			// Delete.cpp
 			void handleDelete(int socket);

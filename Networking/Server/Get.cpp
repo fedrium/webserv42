@@ -18,7 +18,14 @@ void HDE::Server::handleGet(int socket)
 	{
 		cout << "[ERROR] An error has been detected. Aborting request..." << endl;
 		this->status = ERROR;
-		send_error_page(socket, "413");
+		send_error_page(socket, "500");
+		return;
+	}
+
+	if (this->extension == ".py")
+	{
+		cgi(socket);
+		this->status = DONE;
 		return;
 	}
 
@@ -273,76 +280,7 @@ void HDE::Server::html(int socket, string new_url)
 		if (res < 0)
 			perror("Can't send html file\n");
 		file.close();
-		// close(socket);
 	}
 	else
 		send_error_page(socket, "404");
-	
-}
-
-char*	dynamicDup(string s)
-{
-	char *str = new char[s.length() + 1];
-	strcpy(str, s.c_str());
-	return str;
-}
-
-void HDE::Server::cutstr(size_t pos, size_t size)
-{
-	this->content.erase(pos, size);
-}
-
-void HDE::Server::cgi(int socket)
-{
-	(void)socket;
-	std::cout << "URL: " << this->header[1] << std::endl;
-	std::string output;
-	int status;
-
-	char **args = new char*[3];
-	args[0] = dynamicDup("/usr/bin/python3");
-	args[1] = dynamicDup("./public/cgi/upload.py");
-	args[2] = NULL;
-
-	int readfd[2];
-	int writefd[2];
-
-	if (pipe(readfd) == -1 || pipe(writefd) == -1)
-		return;
-	int pid = fork();
-	if (pid == 0)
-	{
-		dup2(readfd[1], STDOUT_FILENO);
-		dup2(writefd[0], STDIN_FILENO);
-		close(readfd[0]);
-		close(readfd[1]);
-		close(writefd[0]);
-		close(writefd[1]);
-
-		execve("/usr/bin/python3", args, 0);
-		perror(strerror(errno));
-		std::cerr << "execve failed" << std::endl;
-		exit(1);
-	}
-	else
-	{
-		while (!this->content.empty())
-		{
-			if (this->content.length() > BUFFER_SIZE)
-			{
-				write(writefd[1], this->content.substr(0, BUFFER_SIZE).c_str(), BUFFER_SIZE);
-				this->cutstr(0, BUFFER_SIZE);
-			}
-			else
-			{
-				write(writefd[1], this->content.c_str(), this->content.size());
-				this->cutstr(0, this->content.size());
-			}
-		}
-		close(writefd[1]);
-		close(writefd[0]);
-		close(readfd[0]);
-		close(readfd[1]);
-		waitpid(pid, &status, 0);
-	}
 }

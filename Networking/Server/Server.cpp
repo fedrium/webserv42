@@ -204,7 +204,7 @@ string HDE::Server::build_path(string url)
 	if (root == config->get_root())
 		finalPath = root + url.substr(0, pathEnd + 1);
 	else
-		finalPath = root + url.substr(baseEnd, pathEnd + 1);
+		finalPath = root + url.substr(baseEnd, pathEnd - baseEnd + 1);
 
 	struct stat path_stat;
 	if ((!stat(finalPath.c_str(), &path_stat) && S_ISDIR(path_stat.st_mode)) || finalPath[finalPath.length() - 1] == '/') // check if path is folder
