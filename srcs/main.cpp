@@ -12,8 +12,12 @@ int main(int ac, char **av)
 			CONF::Config	configuration;
 			configuration.parseServers(file);
 			configuration.showInfo();
+
+			vector<CONF::ServerConfig>	sc(configuration.getServers());
+			vector<ServerLocation>	sl(sc[0].get_locations());
+
 			HDE::Webserv		server(&configuration);
-			server.run_servers();
+			server.run_servers(sl);
 		}
 		catch (const std::exception &e)
 		{

@@ -25,7 +25,7 @@ string HDE::Server::encode_url(const string &value)
 	return (path.str());
 }
 
-void HDE::Server::create_html(int socket)
+void HDE::Server::create_html(int socket, vector<ServerLocation> sl)
 {
 	cout << "create_html" << endl;
 
@@ -45,34 +45,53 @@ void HDE::Server::create_html(int socket)
 	html_str << "<!DOCTYPE html>" << endl;
 	html_str << "<html>" << endl;
 	html_str << "<style>" << endl;
-	html_str << "table, th, td {\nborder:5px solid black;\n}" << endl;
+	html_str << "table, th, td {\nborder:1.5px solid black;\n}" << endl;
 	html_str << "</style>" << endl;
 	html_str << "<body>" << endl;
 	html_str << "<h1> Index of " << this->header[1] << "</h1>" << endl;
 	html_str << "<table style=\"width:100%\">" << endl;
 	html_str << "<tr><th>Name</th><th>Date</th><th>Size</th></tr>" << endl;
 
-	//seg fault.
-	//require root... from config parsing..
-	cout << this->header[1] << endl;
+	cout << "sc path= " << sl[0].get_path() << endl;
+	cout << "sc path= " << sl[1].get_path() << endl;
+	cout << "sc path= " << sl[2].get_path() << endl;
+	cout << "sc path= " << sl[3].get_path() << endl;
+	cout << "sc path= " << sl[4].get_path() << endl;
+	cout << "sc path= " << sl[5].get_path() << endl;
 
-	directory = opendir(this->header[1].c_str());
+	//doesnt work without the period
+	cout << "." << this->header[1] << endl;
+	int	iter = 0;
+	for (; iter != sl.capacity(); ++iter){
+		if (sl[iter].get_path().find(this->header[1]) != string::npos)
+			break ;
+	}
+	cout << "after finding = " << sl[iter].get_path() << endl;
+	cout << "." << sl[iter].get_path() << endl;
+
+	cout << "root = " << sl[iter].get_path() << endl;
+
+	directory = opendir(sl[iter].get_root().c_str());
 	string	path, domain_path, encoded_path;
 
 	for (de = readdir(directory); de != NULL; de = readdir(directory))
 	{
-		path = this->header[1] + de->d_name;
-		domain_path = this->header[1] + "/" + de->d_name;
+		path = sl[iter].get_root() + de->d_name;
+		cout << "path = " << path << endl;
+		domain_path = sl[iter].get_path() + "/" + de->d_name;
+		cout << "domain_path = " << domain_path << endl;
+
 		err = stat(path.c_str(), &buf);
+
 		if (string(de->d_name) == ".")
 			continue ;
 		else if (string(de->d_name) == ".."){
-			if (this->header[1].find('/', 1) != string::npos)
-				domain_path = this->header[1].substr(0, this->header[1].find('/', 1));
+			if (sl[iter].get_path().find('/', 1) != string::npos)
+				domain_path = sl[iter].get_path().substr(0, sl[iter].get_path().find('/', 1));
 			else
 				domain_path = "/";
 		}
-		if (err == -1)
+		if (err < 0)
 			cout << "⌠ stat() failed ⌡" << endl;
 		else{
 			html_str << "<tr>" << endl;

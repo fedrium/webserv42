@@ -42,7 +42,7 @@ void	HDE::Webserv::add_sockfd(const	CONF::ServerConfig *config)
 	cout << endl;
 }
 
-void	HDE::Webserv::run_servers()
+void	HDE::Webserv::run_servers(vector<ServerLocation> sl)
 {
 	int	total_fds;
 	Server	*current; // current server to run
@@ -89,7 +89,7 @@ void	HDE::Webserv::run_servers()
 					{
 						cout << "[NOTICE] Sending data through fd " << fds[i].fd << endl;
 						current->handler();
-						current->responder();
+						current->responder(sl);
 
 						if (current->get_status() == SENDING_CHUNK)
 							i--;

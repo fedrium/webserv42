@@ -81,13 +81,13 @@ HDE::Status HDE::Server::get_status()
 	return this->status;
 }
 
-void HDE::Server::responder()
+void HDE::Server::responder(vector<ServerLocation> sl)
 {
 	switch (this->status)
 	{
 		case NEW:
 			if (header[0] == "GET")
-				handleGet(target_socket);
+				handleGet(target_socket, sl);
 			else if (header[0] == "POST")
 				handlePost(target_socket);
 			else if (header[0] == "DELETE")

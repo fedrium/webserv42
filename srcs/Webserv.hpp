@@ -35,7 +35,7 @@ namespace HDE
 
 			pollfd_vec fds;
 			sockfd_map sockfds;
-			server_map servers; 
+			server_map servers;
 
 			void	add_sockfd(const CONF::ServerConfig *config);
 			void	remove_server(int server_fd);
@@ -45,7 +45,7 @@ namespace HDE
 			Webserv(const CONF::Config *config);
 			~Webserv();
 
-			void	run_servers();
+			void	run_servers(vector<ServerLocation> sl);
 	};
 } // namespace HDE
 

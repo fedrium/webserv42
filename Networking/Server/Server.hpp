@@ -12,6 +12,8 @@ namespace CONF
 	class ServerConfig;
 }
 
+class ServerLocation;
+
 using CONF::Config;
 
 namespace HDE
@@ -52,7 +54,7 @@ namespace HDE
 			// Server.cpp
 			int accepter();
 			void handler();
-			void responder();
+			void responder(vector<ServerLocation> sl);
 
 			int get_socket();
 			string	get_headers();
@@ -68,7 +70,7 @@ namespace HDE
 			void send_whole(int socket, string data);
 			string get_content_type(string extension);
 			string extract_extension(string url);
-			void handleGet(int socket);
+			void handleGet(int socket, vector<ServerLocation> sl);
 			int is_redirect(string url);
 
 			void startLogin(int socket);
@@ -92,7 +94,7 @@ namespace HDE
 
 			//Autoindex.cpp
 			string encode_url(const string &value);
-			void create_html(int socket);
+			void create_html(int socket, vector<ServerLocation> sl);
 	};
 }
 

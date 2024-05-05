@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-void HDE::Server::handleGet(int socket)
+void HDE::Server::handleGet(int socket, vector<ServerLocation> sl)
 {
 	std::stringstream	response;
 	int pathEnd;
@@ -14,11 +14,18 @@ void HDE::Server::handleGet(int socket)
 		return;
 	}
 
-	else if ((header[1].find("/public/html") != string::npos))
+	else
 	{
-		create_html(socket);
-		this->status = DONE;
-		return ;
+		for(vector<ServerLocation>::iterator it_sl = sl.begin(); it_sl < sl.end(); ++it_sl){
+			if ((header[1].find(it_sl->get_path()) != string::npos)){
+				cout << "autoindex= " << it_sl->get_autoindex() << endl;
+				if (it_sl->get_autoindex().compare("on") == 0){
+					create_html(socket, sl);
+					this->status = DONE;
+					return ;
+				}
+			}
+		}
 	}
 
 	this->extension = extract_extension(header[1]);
