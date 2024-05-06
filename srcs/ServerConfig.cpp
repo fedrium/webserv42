@@ -182,11 +182,6 @@ void	CONF::ServerConfig::set_locations(vector<string> info, bool nested)
 				|| info[0] == "allowed_methods")
 				break ;
 			if (locations[Parent].get_autoindex() != ""){
-				info[0].assign("root");
-				info[1].assign(locations[Parent].get_autoindex());
-				locations[i].parseInfoLocation(info);
-			}
-			if (locations[Parent].get_autoindex() != ""){
 				info[0].assign("autoindex");
 				info[1].assign(locations[Parent].get_autoindex());
 				locations[i].parseInfoLocation(info);
