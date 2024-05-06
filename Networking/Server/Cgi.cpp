@@ -55,11 +55,8 @@ void HDE::Server::cgi(int socket)
 		env = queryString(header[1].substr(header[1].find("?") + 1, std::string::npos));
 	}
 	env.push_back(NULL);
-	string parse_filepath, filepath;
-	filepath = this->header[1].substr(0, this->header[1].find("."));
-	filepath.append(".py");
-	parse_filepath = "./public";
-	parse_filepath.append(filepath);
+	string parse_filepath;
+	parse_filepath = this->file_path;
 
 	string output;
 	char **args = new char*[3];

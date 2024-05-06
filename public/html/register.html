@@ -16,16 +16,13 @@
 <body onload="resetForm()">
     <h2>Register</h2>
 
-    <form id="myForm" action="/register" method="get" autocomplete="off">
+    <form id="myForm" action="/cgi/register.py" method="get" autocomplete="off">
         <div class="container">
-            <label for="uname">Username</label><br>
-            <input type="text" name="uname" required autocomplete="off"><br>
+            <label for="username">Username</label><br>
+            <input type="text" name="username" required autocomplete="off"><br>
 
-            <label for="psw">Password</label><br>
-            <input type="password" name="psw" required autocomplete="off"><br>
-
-			<label for="overflow"></label><br>
-            <input type="hidden" name="overflow"><br>
+            <label for="password">Password</label><br>
+            <input type="password" name="password" required autocomplete="off"><br>
 
             <button type="submit">Register</button><br>
         </div>

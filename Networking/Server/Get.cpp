@@ -7,13 +7,6 @@ void HDE::Server::handleGet(int socket)
 	if (handle_redirect(socket, header[1]))
 		return;
 
-	if ((header[1].find("/login") != string::npos || header[1].find("/register") != string::npos) && header[1].find(".html") == string::npos)
-	{
-	 	startLogin(socket);
-		this->status = DONE;
-		return;
-	}
-
 	if (this->status == ERROR_PENDING || this->status == ERROR)
 	{
 		cout << "[ERROR] An error has been detected. Aborting request..." << endl;
@@ -195,92 +188,4 @@ string HDE::Server::extract_extension(string url)
 		return url.substr(this->header[1].find("."), pathEnd - url.find("."));
 	else
 		return "";
-}
-
-void HDE::Server::startLogin(int socket)
-{
-	string userInput, userUsername, userPassword;
-
-	userInput = chopString(header[1], "?")[1];
-	vector<string> tmpInfo1 = chopString(userInput, "&");
-
-	if (tmpInfo1.size() < 3)
-		return send_error_page(socket, "400");
-	if (chopString(tmpInfo1[0], "=").size() != 2 || chopString(tmpInfo1[1], "=").size() != 2)
-		return send_error_page(socket, "400");
-
-	userUsername = chopString(tmpInfo1[0], "=")[1];
-	userPassword = chopString(tmpInfo1[1], "=")[1];
-
-	if (header[1].find("/login") != string::npos)
-		doLogin(socket, userUsername, userPassword);
-	else if (header[1].find("/register") != string::npos)
-		doRegister(socket, userUsername, userPassword);
-}
-
-void HDE::Server::doLogin(int socket, string uname, string pwd)
-{
-	std::ifstream	csvFile("./database/login.csv");
-	string line, formatToCompare;
-	bool validLogin = 0;
-
-	formatToCompare = uname + "," + pwd;
-	while (std::getline(csvFile, line))
-	{
-		if (formatToCompare == line)
-			validLogin = 1;
-	}
-	if (validLogin)
-		html(socket, "/upload.html");
-	else
-		html(socket, "/login_fail.html");
-}
-
-void HDE::Server::doRegister(int socket, string uname, string pwd)
-{
-	std::ofstream csvFile;
-	std::ifstream cmpCsvFile;
-	string line, unameRegged;
-	cmpCsvFile.open("./database/login.csv");
-	while (std::getline(cmpCsvFile, line))
-	{
-		unameRegged = chopString(line, ",")[0];
-		if (uname == unameRegged)
-		{
-			html(socket, "/acc_exists.html");
-			cmpCsvFile.close();
-			return;
-		}
-	}
-	cmpCsvFile.close();
-    csvFile.open("./database/login.csv", std::ios::out | std::ios::app);
-    csvFile << uname << "," << pwd << endl;
-	csvFile.close();
-	html(socket, "/reg_success.html");
-}
-
-void HDE::Server::html(int socket, string new_url)
-{
-	string returnClient, line, filePath;
-	std::ifstream file;
-	returnClient.append("HTTP/1.1 200 OK\r\n");
-	returnClient.append("Content-Type: text/html\r\n\r\n");
-	if (!new_url.empty())
-		header[1] = new_url;
-	filePath.append("./public/html").append(header[1]);
-	file.open(filePath.c_str());
-	if (file.is_open())
-	{
-		while (!file.eof())
-		{
-			std::getline(file, line);
-			returnClient.append(line);
-		}
-		int res = send(socket, returnClient.c_str(), returnClient.size(), 0);
-		if (res < 0)
-			perror("Can't send html file\n");
-		file.close();
-	}
-	else
-		send_error_page(socket, "404");
 }

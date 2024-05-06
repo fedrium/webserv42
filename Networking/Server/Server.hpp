@@ -82,12 +82,6 @@ namespace HDE
 			void handleGet(int socket);
 			int handle_redirect(int socket, string url);
 
-			void startLogin(int socket);
-			void doLogin(int socket, string uname, string pwd);
-			void doRegister(int socket, string uname, string pwd);
-
-			void html(int socket, string new_url);
-
 			// Cgi.cpp
 			vector<char *> queryString(string query);
 			void cgi(int socket);
