@@ -9,7 +9,11 @@ void HDE::Server::handlePost(int socket)
 		this->status = DONE;
 		return;
 	}
-	// parsebody();
+	if (access(file_path.c_str(), R_OK) != 0)
+	{
+		send_error_page(socket, "404");
+		return;
+	}
 	cgi(socket);
 	this->status = DONE;
 }

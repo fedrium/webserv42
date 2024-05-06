@@ -24,6 +24,11 @@ void HDE::Server::handleGet(int socket)
 
 	if (this->extension == ".py")
 	{
+		if (access(file_path.c_str(), R_OK) != 0)
+		{
+			send_error_page(socket, "404");
+			return;
+		}
 		cgi(socket);
 		this->status = DONE;
 		return;
