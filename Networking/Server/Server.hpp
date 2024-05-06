@@ -64,6 +64,7 @@ namespace HDE
 			int is_defined_path(string conf_path, string client_path);
 			void send_error_page(int socket, string error_code);
 			string get_error_text(string error_code);
+			string uncode_hex(string hex);
 
 			int get_socket();
 			string	get_headers();
@@ -94,6 +95,10 @@ namespace HDE
 
 			// Delete.cpp
 			void handleDelete(int socket);
+
+			//Autoindex.cpp
+			string encode_url(const string &value);
+			void create_html(int socket);
 
 	};
 }

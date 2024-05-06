@@ -33,6 +33,7 @@ int HDE::Server::accepter()
 			header.clear(); // is general header
 			for (int i = 0; i < 3; i++)
 				header.push_back(chopString(headers, " \r\n")[i]);
+			header[1] = uncode_hex(header[1]);
 
 			size_t contentLengthPos = headers.find("Content-Length: ");
 			if (contentLengthPos != std::string::npos) // if Content-Length header is present
@@ -219,6 +220,8 @@ string HDE::Server::build_path(string url)
 				finalPath = finalPath + index;
 		}
 	}
+	else
+		this->autoindex = false;
 
 	if (finalPath[0] != '.')
 		finalPath = "." + finalPath;
@@ -337,6 +340,31 @@ string HDE::Server::get_error_text(string error_code)
 		return (string("HTTP Version Not Supported"));
 	else
 		return (string("Error Not Found"));
+}
+
+string HDE::Server::uncode_hex(string hex)
+{
+	string newString;
+	size_t i = 0;
+	const char *arr = hex.c_str();
+
+	while (i < hex.length())
+	{
+		if (arr[i] == '%')
+		{
+			i++;
+			string byte = hex.substr(i,2);
+			char chr = (char)(int)strtol(byte.c_str(), NULL, 16);
+			newString.push_back(chr);
+			i += 2;
+		}
+		else
+		{
+			newString.push_back(arr[i]);
+			i++;
+		}
+	}
+	return (newString);
 }
 
 int	HDE::Server::get_socket()

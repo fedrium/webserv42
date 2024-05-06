@@ -6,6 +6,13 @@ void HDE::Server::handleGet(int socket)
 
 	if (handle_redirect(socket, header[1]))
 		return;
+	
+	if (this->autoindex == true)
+	{
+		create_html(socket);
+		this->status = DONE;
+		return;
+	}
 
 	if (this->status == ERROR_PENDING || this->status == ERROR)
 	{
