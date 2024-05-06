@@ -24,6 +24,7 @@ else:
 file.close()
 
 if (nextAction == "F"):
+    print("HTTP/1.1 200 OK\r\nConnection: keep-alive\r\nContent-Type: text/html\r\n")
     print("<!DOCTYPE html>")
     print("<html>")
     print("<head>")
@@ -45,6 +46,7 @@ else:
     file.write(search)
     file.close
 
+    print("HTTP/1.1 200 OK\r\nConnection: keep-alive\r\nContent-Type: text/html\r\n")
     print("<!DOCTYPE html>")
     print("<html>")
     print("<head>")

@@ -26,7 +26,23 @@ start = body.find(b'\r\n\r\n') + 4
 
 output = body[start:end]
 
-
-
 with open("./database/files/" + (filename).decode('utf-8'), 'wb') as nf:
     nf.write(output)
+
+print("HTTP/1.1 200 OK\r\nConnection: keep-alive\r\nContent-Type: text/html\r\n")
+print("<!DOCTYPE html>")
+print("<html>")
+print("<head>")
+print("<title>Upload Successful</title>")
+print("<script>")
+print("function redirectToPage() {")
+print("window.location.href = \"/upload.html\";")
+print("}")
+print("</script>")
+print("</head>")
+print("<body>")
+print("<h2>Upload successful!</h2>")
+print("<body>")
+print("<button onclick=\"redirectToPage()\">Go back</button>")
+print("</body>")
+print("</html>")

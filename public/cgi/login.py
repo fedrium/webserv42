@@ -27,8 +27,9 @@ if (nextAction == "F"):
     if (os.path.isfile("./public/html/upload.html")):
         uploadFilePath = "/upload.html"
     else:
-         uploadFilePath = "/cgi/upload.html"
+        uploadFilePath = "/cgi/upload.html"
 
+    print("HTTP/1.1 200 OK\r\nConnection: keep-alive\r\nContent-Type: text/html\r\n")
     print("<!DOCTYPE html>")
     print("<html>")
     print("<head>")
