@@ -113,7 +113,7 @@ string HDE::Server::get_content_type(string extension)
 {
 	if (extension == ".html" || extension == ".css" || extension == ".plain")
 		return ("text/" + extension.substr(1));
-	else if (extension == ".png" || extension == ".jpeg" || extension == ".jpg")
+	else if (extension == ".png" || extension == ".jpeg" || extension == ".jpg" || extension == ".webp")
 		return ("image/" + extension.substr(1));
 	else if (extension == ".mp4")
 		return ("video/" + extension.substr(1));
