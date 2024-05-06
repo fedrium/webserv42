@@ -20,8 +20,9 @@ namespace CONF
 			std::map<string, string>			error_page;
 			std::map<string, string>			cgi;
 			std::vector<ServerLocation>			locations;
-			
+
 			int									count;
+			int									Parent;
 
 		public:
 			ServerConfig();
@@ -41,7 +42,7 @@ namespace CONF
 			void	set_allowed_methods(vector<string> info);
 			void	set_error_page(vector<string> info);
 			void	set_cgi(vector<string> info);
-			void	set_locations(vector<string> info);
+			void	set_locations(vector<string> info, bool nested);
 
 			const string	get_root() const;
 			const string	get_index() const;
@@ -52,7 +53,9 @@ namespace CONF
 			const std::map<string, string>		get_error_page() const;
 			const std::map<string, string>		get_cgi() const;
 			const std::vector<ServerLocation>		get_locations() const;
+
+			void	set_parent(int i);
 	};
-}
+};
 
 #endif
