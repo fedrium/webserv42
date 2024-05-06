@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Download File</title>
+</head>
+<body>
+    <h1>Download File</h1>
+    <p>Enter the URL of the file you want to download:</p>
+    
+    <!-- Input field for the user to enter the URL -->
+    <input type="text" id="fileUrl" placeholder="Enter URL" style="width: 300px;"><br><br>
+    
+    <!-- Button to trigger the download -->
+    <button onclick="downloadFile()">Download</button>
+    
+    <script>
+        function downloadFile() {
+            // Get the value of the input field (URL)
+            var fileUrl = document.getElementById("fileUrl").value;
+            
+            // Extract filename from the URL
+            var filename = fileUrl.split('/').pop(); // Get the last part of the URL
+            
+            // Construct the download link with the input URL and extracted filename
+            var downloadLink = document.createElement("a");
+            downloadLink.href = fileUrl;
+            downloadLink.download = filename; // Set the filename for download
+            // Click the link to initiate the download
+            downloadLink.click();
+        }
+    </script>
+</body>
+</html>
