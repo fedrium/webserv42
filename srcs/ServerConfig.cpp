@@ -20,6 +20,7 @@ CONF::ServerConfig::ServerConfig(const CONF::ServerConfig &obj)
 	this->error_page = obj.error_page;
 	this->cgi = obj.cgi;
 	this->locations = obj.locations;
+	this->count = obj.count;
 }
 
 CONF::ServerConfig::~ServerConfig()
@@ -33,7 +34,8 @@ void CONF::ServerConfig::parseInfo(vector<string> info)
 
 	if (info[0] == "location"){
 		if (in_location_block % 2 == 1){
-			count++;
+			++count;
+			set_locations(info, true);
 		}
 		else
 			in_location_block += 1;
@@ -44,7 +46,7 @@ void CONF::ServerConfig::parseInfo(vector<string> info)
 		vector<string> tmp;
 		tmp.push_back("");
 		tmp.push_back("");
-		set_locations(tmp);
+		set_locations(tmp, false);
 	}
 
 	if (info[0] == "}" && in_location_block % 2 == 1){
@@ -55,7 +57,7 @@ void CONF::ServerConfig::parseInfo(vector<string> info)
 		set_server_attr(info);
 
 	else
-		set_locations(info);
+		set_locations(info, false);
 }
 
 void	CONF::ServerConfig::set_server_attr(vector<string> info)
@@ -153,9 +155,14 @@ void	CONF::ServerConfig::set_cgi(vector<string> info)
 	this->cgi[info[1]] = info[2];
 }
 
-void	CONF::ServerConfig::set_locations(vector<string> info)
+void	CONF::ServerConfig::set_locations(vector<string> info, bool nested)
 {
 	static int i = -1;
+
+	if (nested == true){
+		this->Parent = i;
+		return ;
+	}
 
 	if (!this->locations.size())
 		i = -1;
@@ -174,38 +181,49 @@ void	CONF::ServerConfig::set_locations(vector<string> info)
 				|| info[0] == "return" || info[0] == "alias" || info[0] == "client_max_body_size"
 				|| info[0] == "allowed_methods")
 				break ;
-			if (locations[i].get_autoindex() == ""){
+			if (locations[Parent].get_autoindex() != ""){
+				info[0].assign("root");
+				info[1].assign(locations[Parent].get_autoindex());
+				locations[i].parseInfoLocation(info);
+			}
+			if (locations[Parent].get_autoindex() != ""){
 				info[0].assign("autoindex");
-				info[1].assign(locations[i - 1].get_autoindex());
+				info[1].assign(locations[Parent].get_autoindex());
 				locations[i].parseInfoLocation(info);
 			}
-			if (locations[i].get_index() == ""){
+			if (locations[Parent].get_index() != ""){
 				info[0].assign("index");
-				info[1].assign(locations[i - 1].get_index());
+				info[1].assign(locations[Parent].get_index());
 				locations[i].parseInfoLocation(info);
 			}
-			if (locations[i].get_return_url() == ""){
+			if (locations[Parent].get_return_url() != ""){
 				info[0].assign("return");
-				info[1].assign(locations[i - 1].get_return_url());
+				info[1].assign(locations[Parent].get_return_url());
 				locations[i].parseInfoLocation(info);
 			}
-			if (locations[i].get_alias() == ""){
+			if (locations[Parent].get_alias() != ""){
 				info[0].assign("alias");
-				info[1].assign(locations[i - 1].get_alias());
+				info[1].assign(locations[Parent].get_alias());
 				locations[i].parseInfoLocation(info);
 			}
-			if (locations[i].get_client_max_body_size() == ""){
+			if (locations[Parent].get_client_max_body_size() != ""){
 				info[0].assign("client_max_body_size");
-				info[1].assign(locations[i - 1].get_client_max_body_size());
+				info[1].assign(locations[Parent].get_client_max_body_size());
+				locations[i].parseInfoLocation(info);
+			}
+			if (locations[Parent].get_client_max_body_size() != ""){
+				info[0].assign("allowed_methods");
+				info[1].assign(locations[Parent].get_client_max_body_size());
 				locations[i].parseInfoLocation(info);
 			}
 			else
 				break ;
-			count++;
+			++count;
 			return ;
 		}
 		locations[i].parseInfoLocation(info);
 	}
+	return ;
 }
 
 const string	CONF::ServerConfig::get_root() const
