@@ -93,6 +93,8 @@ void HDE::Server::create_html(int socket)
 		}
 	}
 
+	closedir(directory);
+
 	html_str << "</table>" << endl;
 	html_str << "</body>" << endl;
 	html_str << "</html>" << endl;

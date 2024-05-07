@@ -17,7 +17,7 @@ char* char_substr(string &str, size_t start, size_t length) {
     char* result = new char[length + 1];
     std::strncpy(result, str.c_str() + start, length);
     result[length] = '\0';
-    
+
     return result;
 }
 
@@ -46,7 +46,7 @@ void HDE::Server::cgi(int socket)
 	// char **env;
 	vector<char *> env;
 	char buf[BUFFER_SIZE];
-	
+
 	// if (header[1].find("?") != std::string::npos)
 	// 	env = queryString(header[1].substr(header[1].find("?") + 1, std::string::npos));
 
@@ -114,6 +114,13 @@ void HDE::Server::cgi(int socket)
 		output.append("\0");
 		output.append("\r\n\r\n");
 		close(readfd[0]);
+		delete[] args[0];
+		delete[] args[1];
+		delete[] args;
+		if (header[1].find("?") != string::npos){
+			for (size_t i = 0; i < env.size(); i++)
+				delete[] env[i];
+		}
 		cout << "CGI: " << output << std::endl;
 		send_whole(socket, output);
 	}
