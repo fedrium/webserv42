@@ -6,7 +6,8 @@ void HDE::Server::handleGet(int socket)
 
 	if (handle_redirect(socket, header[1]))
 		return;
-	
+
+	// cout << "autoindex : " << this->autoindex << endl;
 	if (this->autoindex == true)
 	{
 		create_html(socket);
@@ -159,7 +160,7 @@ void HDE::Server::send_chunk()
 		cout << "[NOTICE] Sending chunk number " << chunk_times << " of size " << to_send.length() << "..." << endl;
 		this->fstream_for_chunk.close();
 		send_whole(this->target_socket, chunk.str());
-	
+
 		chunk_end << std::hex << 0 << std::dec << "\r\n\r\n"; // send empty string to alert client that all data is sent
 		send_whole(this->target_socket, chunk_end.str());
 		cout << "[INFO] All data chunks have been sent" << endl;

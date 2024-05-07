@@ -42,14 +42,13 @@ void CONF::ServerConfig::parseInfo(vector<string> info)
 	}
 
 	if (info[0] == "}" && count % 2 == 1){
-		in_location_block += 1;
 		vector<string> tmp;
 		tmp.push_back("");
 		tmp.push_back("");
 		set_locations(tmp, false);
 	}
 
-	if (info[0] == "}" && in_location_block % 2 == 1){
+	else if (info[0] == "}" && in_location_block % 2 == 1){
 		in_location_block += 1;
 	}
 
@@ -181,33 +180,28 @@ void	CONF::ServerConfig::set_locations(vector<string> info, bool nested)
 				|| info[0] == "return" || info[0] == "alias" || info[0] == "client_max_body_size"
 				|| info[0] == "allowed_methods")
 				break ;
-			if (locations[Parent].get_autoindex() != ""){
+			if (locations[i].get_autoindex() == "" && locations[Parent].get_autoindex() != ""){
 				info[0].assign("autoindex");
 				info[1].assign(locations[Parent].get_autoindex());
 				locations[i].parseInfoLocation(info);
 			}
-			if (locations[Parent].get_index() != ""){
+			if (locations[i].get_index() == "" && locations[Parent].get_index() != ""){
 				info[0].assign("index");
 				info[1].assign(locations[Parent].get_index());
 				locations[i].parseInfoLocation(info);
 			}
-			if (locations[Parent].get_return_url() != ""){
+			if (locations[i].get_return_url() == "" && locations[Parent].get_return_url() != ""){
 				info[0].assign("return");
 				info[1].assign(locations[Parent].get_return_url());
 				locations[i].parseInfoLocation(info);
 			}
-			if (locations[Parent].get_alias() != ""){
+			if (locations[i].get_alias() == "" && locations[Parent].get_alias() != ""){
 				info[0].assign("alias");
 				info[1].assign(locations[Parent].get_alias());
 				locations[i].parseInfoLocation(info);
 			}
-			if (locations[Parent].get_client_max_body_size() != ""){
+			if (locations[i].get_client_max_body_size() == "" && locations[Parent].get_client_max_body_size() != ""){
 				info[0].assign("client_max_body_size");
-				info[1].assign(locations[Parent].get_client_max_body_size());
-				locations[i].parseInfoLocation(info);
-			}
-			if (locations[Parent].get_client_max_body_size() != ""){
-				info[0].assign("allowed_methods");
 				info[1].assign(locations[Parent].get_client_max_body_size());
 				locations[i].parseInfoLocation(info);
 			}

@@ -80,7 +80,8 @@ void HDE::Server::create_html(int socket)
 		{
 			html_str << "<tr>" << endl;
 			encoded_path = encode_url(domain_path);
-			html_str << "<td><a href=\"" << encoded_path << "\">" << de->d_name << "</a></td>" << endl;
+			//current page url goes here
+			html_str << "<td><a href=\"" /* << config->get_locations()[1].get_path() */ << encoded_path << "\">" << de->d_name << "</a></td>" << endl;
 			//cplusplus.com strftime
 			timeinfo = localtime(&(buf.st_mtime));
 			strftime(buffer, 80, "%e-%B-%Y", timeinfo);

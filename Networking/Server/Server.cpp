@@ -90,10 +90,10 @@ void HDE::Server::handler()
 	switch (this->status)
 	{
 		case NEW:
-			cout << "[INFO] General Header Received: ----------------------" << endl;
-			for (size_t i = 0; i < header.size(); i++)
-				cout << header[i] << " ";
-			cout << endl;
+			// cout << "[INFO] General Header Received: ----------------------" << endl;
+			// for (size_t i = 0; i < header.size(); i++)
+			// 	cout << header[i] << " ";
+			// cout << endl;
 			// cout << "[INFO] Header Received: ------------------------------" << endl;
 			// cout << headers << endl;
 			// cout << "[INFO] Content Received: -----------------------------" << endl;
@@ -118,6 +118,7 @@ void HDE::Server::responder()
 {
 	this->extension = extract_extension(header[1]);
 	this->file_path = build_path(header[1]);
+	// cout << "file_path : " << file_path << endl;
 
 	switch (this->status)
 	{
