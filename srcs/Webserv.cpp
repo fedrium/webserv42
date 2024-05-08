@@ -124,7 +124,7 @@ void	HDE::Webserv::remove_server(int server_fd)
 		}
 	}
 
-	delete this->servers[server_fd];
+	// delete this->servers[server_fd];
 	this->servers.erase(server_fd); // remove from map
 	cout << "[NOTICE] Removed server of fd " << server_fd << endl;
 }
